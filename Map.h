@@ -13,4 +13,8 @@ public:
 	void addUAV(UAV nemUAV);
 	void readGIS(string file); //у меня где-то есть работа с этим форматом
 	void divideTer();//разделение территории, каждому бла назначаются цели и передается вектор объектов на его территоррии (???)
+	bool allUVAtogether();//возвращает true, если все бла рядом
+	int calcAims(float k1, float b1, float k2, float b2, Object dir); // подсчет количества целей между двумя прямыми
+	vector<Aim> aimsForUAV(float k1, float b1, float k2, float b2, Object dir);
+	vector<GeoObject> goForUAV(float k1, float b1, float k2, float b2, Object dir);
 };
