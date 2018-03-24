@@ -45,7 +45,7 @@ Object GeoObject::point(float x1, float y1, float x2, float y2)
 	else
 		return Object(x2cross, y2cross);
 };
-bool operator==(GeoObject go2)
+bool GeoObject::operator==(GeoObject go2)
 {
 	if (go2.getX() == x && go2.getY() == y)
 		return true;

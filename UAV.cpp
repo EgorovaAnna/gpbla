@@ -14,16 +14,16 @@ void UAV::addPoint(Object point)
 }; 
 void UAV::addAim(Aim newAim)
 {
-	aims.push_back(aim);
+	aims.push_back(newAim);
 };
-void UAV::iteration(dt)
+void UAV::iteration(float dt)
 {
 	
 }; 
 void UAV::deleteAim(Aim aim)
 {
 	for(auto i = aims.begin(); i < aims.end(); i++)
-		if (aims[i] == aim)
+		if (*i == aim)
 			aims.erase(i);
 };
 float UAV::getX()
@@ -37,7 +37,7 @@ float UAV::getY()
 void UAV::roat(vector<Aim> aims)
 {
 	int i, j;
-	float **mas = new *float[aims.size() + 1]; // матрица растояний
+	float **mas = new float*[aims.size() + 1]; // матрица растояний
 	for(i = 0; i <= aims.size(); i++)
 		mas[i] = new float[aims.size() + 1];
 	for(i = 1; i <= aims.size(); i++)

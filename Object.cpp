@@ -18,3 +18,11 @@ float Object::getY()
 {
 	return y;
 }
+void Object::setX(float nx)
+{
+	x = nx;
+}
+void Object::setY(float ny)
+{
+	y = ny;
+}

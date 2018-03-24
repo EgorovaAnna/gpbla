@@ -15,7 +15,7 @@ public:
 	UAV(float nx, float ny, float nz, int nt); //первичная инициализация
 	void addPoint(Object point); 
 	void addAim(Aim newAim);
-	void iteration(dt); //моделирование полета
+	void iteration(float dt); //моделирование полета
 	void deleteAim(Aim aim); //когда цель кто-то отснял
 	float getX();
 	float getY();

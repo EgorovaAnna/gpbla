@@ -4,9 +4,9 @@ ChangeHeight::ChangeHeight(float nx, float ny, float nh, bool npvo) : Object(nx,
 {
 	height = nh;
 };
-bool ChangeHeight::upper(float height)
+bool ChangeHeight::upper(float h)
 {
-	if (height > h)
+	if (h > height)
 		return true;
 	return false;
 };

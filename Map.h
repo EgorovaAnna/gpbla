@@ -1,4 +1,5 @@
 #include "UAV.h"
+#include <unistd.h>
 
 class Map
 {
@@ -18,3 +19,4 @@ public:
 	vector<Aim> aimsForUAV(float k1, float b1, float k2, float b2, Object dir);
 	vector<GeoObject> goForUAV(float k1, float b1, float k2, float b2, Object dir);
 };
+
