@@ -55,7 +55,7 @@ void Map::readGIS(string file)
 void Map::divideTer()
 {
 	cout << "point1" << '\n';
-	vector<Line> k; // так вообще можно?
+	vector<Line> k;
 	vector<Object> dirs;
 	float dk;
 	float dxy = (x2 - x1 + y2 - y1)/10;
@@ -87,8 +87,8 @@ void Map::divideTer()
 				cout << i << " point 5.1  " << calcAims(k[i - 1][0], k[i - 1][1], k[i][0], k[i][1], dirs[i - 1]) << " " << aimsInSector << '\n';
 				k[i].setK(k[i][0] + 3.14159265359/180);//подумать, какой будет сдвиг для луча
 				k[i].setB(uavs[0].getY() - uavs[0].getX()*tan(k[i][0]));
-				dirs[i].setX(uavs[0].getX() + cos(k[i - 1][0] + (k[i][0] - k[i - 1][0])/2)*dxy);
-				dirs[i].setY(uavs[0].getY() + sin(k[i - 1][0] + (k[i][0] - k[i - 1][0])/2)*dxy); 
+				dirs[i - 1].setX(uavs[0].getX() + cos(k[i - 1][0] + (k[i][0] - k[i - 1][0])/2)*dxy);
+				dirs[i - 1].setY(uavs[0].getY() + sin(k[i - 1][0] + (k[i][0] - k[i - 1][0])/2)*dxy); 
 				//sleep(1);
 			}
 			while (calcAims(k[i - 1][0], k[i - 1][1], k[i][0], k[i][1], dirs[i - 1]) > aimsInSector + 1)
@@ -96,21 +96,21 @@ void Map::divideTer()
 				cout << i << " point 5.2  " << calcAims(k[i - 1][0], k[i - 1][1], k[i][0], k[i][1], dirs[i - 1]) << " " << aimsInSector;
 				k[i].setK(k[i][0] - 3.14159265359/180);
 				k[i].setB(uavs[0].getY() - uavs[0].getX()*tan(k[i][0]));
-				dirs[i].setX(uavs[0].getX() + cos(k[i - 1][0] + (k[i][0] - k[i - 1][0])/2)*dxy);
-				dirs[i].setY(uavs[0].getY() + sin(k[i - 1][0] + (k[i][0] - k[i - 1][0])/2)*dxy); 
+				dirs[i - 1].setX(uavs[0].getX() + cos(k[i - 1][0] + (k[i][0] - k[i - 1][0])/2)*dxy);
+				dirs[i - 1].setY(uavs[0].getY() + sin(k[i - 1][0] + (k[i][0] - k[i - 1][0])/2)*dxy); 
 			}
 			cout << "point6   " << k[i][0]*180/3.14 << '\n';
 		}
 		dirs.push_back(Object(uavs[0].getX() + cos(k[uavs.size() - 1][0] + (2*3.14159265359 - k[uavs.size() - 1][0])/2)*dxy, uavs[0].getY() + sin(k[uavs.size() - 1][0] + (2*3.14159265359 - k[uavs.size() - 1][0])/2)*dxy));
 		for (int i = 0; i < uavs.size() - 1; i++)
 		{
-			cout << i << " ";
+			cout << i << ".      ";
 			uavs[i].roat(aimsForUAV(k[i][0], k[i][1], k[i + 1][0], k[i + 1][1], dirs[i]));
 			//uavs[i].elaborateRoat(goForUAV(k[i][0], k[i][1], k[i + 1][0], k[i + 1][1], dirs[i]));
 			cout << '\n';
 		}
-		cout << uavs.size() - 1 << " ";
-		uavs[uavs.size() - 1].roat(aimsForUAV(k[uavs.size() - 1][0], k[uavs.size() - 1][1], k[0][0], k[0][1], dirs[uavs.size() - 1]));
+		cout << uavs.size() - 1 << ".      ";
+		uavs[uavs.size() - 1].roat(aimsForUAV(k[uavs.size() - 1][0], k[uavs.size() - 1][1], 2*3.14159265359 + k[0][0], k[0][1], dirs[uavs.size() - 1]));
 		cout << '\n';
 		//uavs[i].elaborateRoat(goForUAV(k[i][0], k[i][1], k[i + 1][0], k[i + 1][1], dirs[i]));
 	}
@@ -130,14 +130,17 @@ bool Map::allUVAtogether()
 int Map::calcAims(float k1, float b1, float k2, float b2, Object dir) // будет косячить, если мы около нулевой широты/долготы
 {
 	int sum = 0;
-	float dirx, diry, k, x13, x23;
-	if (tan(k1) > tan(k2))
+	//if (tan(k1) > tan(k2))
+	float b, k, x13, x23, k11, k22, y13, y23;
+	if (k1 > k2)
 	{
-		k = k1;
-		k1 = k2;
-		k2 = k;
+		k = k1; k1 = k2; k2 = k;
+		b = b1; b1 = b2; b2 = b;
 	}
-	Object centr((b2 - b1)/(k1 - k2), k1*(b2 - b1)/(k1 - k2) + b1);
+	k11 = min(atan(tan(k1)), atan(tan(k2)));
+	k22 = max(atan(tan(k1)), atan(tan(k2)));
+	Object centr((b2 - b1)/(tan(k1) - tan(k2)), tan(k1)*(b2 - b1)/(tan(k1) - tan(k2)) + b1);
+	//Object centr((b2 - b1)/(k1 - k2), k1*(b2 - b1)/(k1 - k2) + b1);
 	//dirx = centr.getX() - dir.getX(); //и вот тут еще что-то не то. потом переделать определение направления надо
 	//diry = centr.getY() - dir.getY();
 	for (int i = 0; i < aims.size(); i++)
@@ -148,28 +151,37 @@ int Map::calcAims(float k1, float b1, float k2, float b2, Object dir) // буд�
 		x13 = (aims[i].getY() - aims[i].getX()*(dir.getY() - aims[i].getY())/(dir.getX() - aims[i].getX()) - b1)/(tan(k1) - (dir.getY() - aims[i].getY())/(dir.getX() - aims[i].getX()));
 		//cout << x13 << '\n';
 		x23 = (aims[i].getY() - aims[i].getX()*(dir.getY() - aims[i].getY())/(dir.getX() - aims[i].getX()) - b2)/(tan(k2) - (dir.getY() - aims[i].getY())/(dir.getX() - aims[i].getX()));
-		if (k >= tan(k1) && k <= tan(k2) && (x13 <= min(aims[i].getX(), dir.getX()) || x13 >= max(aims[i].getX(), dir.getX())) && (x23 <= min(aims[i].getX(), dir.getX()) || x23 >= max(aims[i].getX(), dir.getX())))
+		//if (k >= tan(k1) && k <= tan(k2) && (x13 <= min(aims[i].getX(), dir.getX()) || x13 >= max(aims[i].getX(), dir.getX())) && (x23 <= min(aims[i].getX(), dir.getX()) || x23 >= max(aims[i].getX(), dir.getX())))
+		y13 = tan(k1)*x13 + b1;
+		y23 = tan(k2)*x23 + b2;
+		if ((y13 <= min(aims[i].getY(), dir.getY()) || y13 >= max(aims[i].getY(), dir.getY())) && (y23 <= min(aims[i].getY(), dir.getY()) || y23 >= max(aims[i].getY(), dir.getY())) && (x13 <= min(aims[i].getX(), dir.getX()) || x13 >= max(aims[i].getX(), dir.getX())) && (x23 <= min(aims[i].getX(), dir.getX()) || x23 >= max(aims[i].getX(), dir.getX())))
 			sum++;
 	}
 	return sum;
 };
 vector<Aim> Map::aimsForUAV(float k1, float b1, float k2, float b2, Object dir)
 {
+	cout << k1*180/3.14 << " " << k2*180/3.14 << " (" << dir.getX() << ";" << dir.getY() << ")    ";
 	vector<Aim> sum;
-	float k, x13, x23;
-	if (tan(k1) > tan(k2))
+	float b, k, x13, x23, k11, k22, y13, y23;
+	if (k1 > k2)
 	{
-		k = k1;
-		k1 = k2;
-		k2 = k;
+		k = k1; k1 = k2; k2 = k;
+		b = b1; b1 = b2; b2 = b;
 	}
-	Object centr((b2 - b1)/(k1 - k2), k1*(b2 - b1)/(k1 - k2) + b1);
+	k11 = min(atan(tan(k1)), atan(tan(k2)));
+	k22 = max(atan(tan(k1)), atan(tan(k2)));
+	Object centr((b2 - b1)/(tan(k1) - tan(k2)), tan(k1)*(b2 - b1)/(tan(k1) - tan(k2)) + b1);
 	for (int i = 0; i < aims.size(); i++)
 	{
-		k = (aims[i].getY() - centr.getY())/(aims[i].getX() - centr.getX());
+		//k = (aims[i].getY() - centr.getY())/(aims[i].getX() - centr.getX());
 		x13 = (aims[i].getY() - aims[i].getX()*(dir.getY() - aims[i].getY())/(dir.getX() - aims[i].getX()) - b1)/(tan(k1) - (dir.getY() - aims[i].getY())/(dir.getX() - aims[i].getX()));
 		x23 = (aims[i].getY() - aims[i].getX()*(dir.getY() - aims[i].getY())/(dir.getX() - aims[i].getX()) - b2)/(tan(k2) - (dir.getY() - aims[i].getY())/(dir.getX() - aims[i].getX()));
-		if (k >= tan(k1) && k <= tan(k2) && (x13 <= min(aims[i].getX(), dir.getX()) || x13 >= max(aims[i].getX(), dir.getX())) && (x23 <= min(aims[i].getX(), dir.getX()) || x23 >= max(aims[i].getX(), dir.getX())))
+		y13 = tan(k1)*x13 + b1;
+		y23 = tan(k2)*x23 + b2;
+		//cout << aims[i].getX() << ";" << aims[i].getY() << "    " << k11*180/3.14 << " " << atan(k)*180/3.14 << " " << k22*180/3.14 << "      " << x13 << ";" << x23 << '\n';
+		//if (atan(k) >= k11 && atan(k) <= k22 && (x13 <= min(aims[i].getX(), dir.getX()) || x13 >= max(aims[i].getX(), dir.getX())) && (x23 <= min(aims[i].getX(), dir.getX()) || x23 >= max(aims[i].getX(), dir.getX())))
+		if ((y13 <= min(aims[i].getY(), dir.getY()) || y13 >= max(aims[i].getY(), dir.getY())) && (y23 <= min(aims[i].getY(), dir.getY()) || y23 >= max(aims[i].getY(), dir.getY())) && (x13 <= min(aims[i].getX(), dir.getX()) || x13 >= max(aims[i].getX(), dir.getX())) && (x23 <= min(aims[i].getX(), dir.getX()) || x23 >= max(aims[i].getX(), dir.getX())))
 		{
 			sum.push_back(aims[i]);
 			cout << aims[i].getX() << ";" << aims[i].getY() << "    ";
