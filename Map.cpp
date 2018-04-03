@@ -94,9 +94,11 @@ void Map::divideTer()
 		dirs.push_back(Object(uavs[0].getX() + cos(k[uavs.size() - 1][0] + (2*pi - k[uavs.size() - 1][0])/2)*dxy, uavs[0].getY() + sin(k[uavs.size() - 1][0] + (2*pi - k[uavs.size() - 1][0])/2)*dxy));
 		for (int i = 0; i < uavs.size() - 1; i++)
 		{
+			cout << '\n' << "UAV " << i << ":" << '\n';
 			uavs[i].roat(aimsForUAV(k[i][0], k[i][1], k[i + 1][0], k[i + 1][1], dirs[i]));
 			//uavs[i].elaborateRoat(goForUAV(k[i][0], k[i][1], k[i + 1][0], k[i + 1][1], dirs[i]));
 		}
+		cout << '\n' << "UAV " << uavs.size() - 1 << ":" << '\n';
 		uavs[uavs.size() - 1].roat(aimsForUAV(k[uavs.size() - 1][0], k[uavs.size() - 1][1], 2*pi + k[0][0], k[0][1], dirs[uavs.size() - 1]));
 		//uavs[i].elaborateRoat(goForUAV(k[i][0], k[i][1], k[i + 1][0], k[i + 1][1], dirs[i]));
 	}

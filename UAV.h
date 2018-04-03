@@ -1,6 +1,8 @@
 #include "Aim.h"
 #include "PVO.h"
 #include "ChangeHeight.h"
+#include <unistd.h>
+
 
 class UAV
 {

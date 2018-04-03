@@ -16,6 +16,11 @@ int main()
 	map.addAim(Aim(70, 60, 0));
 	map.addAim(Aim(90, 20, 0));
 	map.addAim(Aim(100, 20, 0));
+	map.addAim(Aim(40, 20, 0));
+	map.addAim(Aim(10, 80, 0));
+	map.addAim(Aim(70, 30, 0));
+	map.addAim(Aim(90, 90, 0));
+	map.addAim(Aim(100, 73, 0));
 	map.addUAV(UAV(50, 50, 0, 0));
 	map.addUAV(UAV(50, 50, 0, 0));
 	map.addUAV(UAV(50, 50, 0, 0));

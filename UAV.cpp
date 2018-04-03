@@ -36,82 +36,149 @@ float UAV::getY()
 };
 void UAV::roat(vector<Aim> aims)
 {
-	int i, j, max = pow(10, 10);
-	float **mas = new float*[aims.size() + 1], **mas2 = new float*[aims.size() + 1]; // матрица растояний
-	float *g = new float[aims.size() + 1], *h = new float[aims.size() + 1];
-	float min1, min2, mark[3], minel1, minel2;
-	vector<int[2]> answer;
-	for(i = 0; i <= aims.size(); i++)
+	int i, j, aimssize = aims.size(), iter, k, max = pow(10, 10);
+	if (aimssize == 1 || aimssize == 2)
 	{
-		mas[i] = new float[aims.size() + 1];
-		mas2[i] = new float[aims.size() + 1];
+		points.push_back(Object(x, y));
+		points.push_back(aims[0]);
+		if (aimssize == 2)
+			points.push_back(aims[1]);
+		points.push_back(Object(x, y));
 	}
-	for(i = 1; i <= aims.size(); i++)
+	else
 	{
-		min1 = max;
-		for(j = 1; j <= aims.size(); j++)
+		float **mas = new float*[aimssize + 1], **mas2 = new float*[aimssize + 1]; // матрица растояний
+		float *g = new float[aimssize + 1], *h = new float[aimssize + 1];
+		float min1, min2, mark[3], minel1, minel2;
+		vector<int> column, line;
+		vector<int> from, to;
+		//cout << "point1 " << aims.size() << '\n';
+		for(i = 0; i <= aimssize; i++)
 		{
-			if (i != j)
-				mas[i][j] = pow(pow(aims[i].getX() - aims[j].getX(), 2) + pow(aims[i].getY() - aims[j].getY(), 2), 0.5);
-				//cout << mas[i][j] = pow(pow(aims[i].getX() - aims[j].getX(), 2) + pow(aims[i].getY() - aims[j].getY(), 2), 0.5) << " ";
-			else
-				mas[i][j] = max;
-			min1 = min(min1, mas[i][j]);
-			mas2[i][j] = mas[i][j];
+			mas[i] = new float[aimssize + 1];
+			mas2[i] = new float[aimssize + 1];
+			column.push_back(i); line.push_back(i);
 		}
-		g[i] = min1;
-		//cout << '\n';
-	}
-	mas[0][0] = max;
-	mas2[0][0] = max; 
-	min1 = max; min2 = max; 
-	for(i = 1; i <= aims.size(); i++)
-	{
-		mas[i][0] = pow(pow(x - aims[i].getX(), 2) + pow(y - aims[i].getY(), 2), 0.5);
-		mas[0][i] = pow(pow(x - aims[i].getX(), 2) + pow(y - aims[i].getY(), 2), 0.5);
-		mas2[0][i] = mas[0][i];
-		mas2[i][0] = mas[i][0];
-		min1 = min(min1, mas[0][i]);
-		min2 = min(min1, mas[i][0]);
-	}
-	g[0] = min1;
-	h[0] = min2;
-	for (int k = 0; k <= aims.size(); k++)
-	{
-		for(i = 0; i <= aims.size(); i++)
+		for(i = 1; i <= aimssize; i++)
 		{
-			min2 = max;
-			for(j = 0; j <= aims.size(); j++)
-				mas2[i][j] -= g[i];
-			for(j = 1; j <= aims.size(); j++)
-				min2 = min(min2, mas[j][i]);
-			h[i] = min2;
+			cout << aims[i - 1].getX() << "; " << aims[i - 1].getY() << "       ";
+			min1 = max;
+			for(j = 1; j <= aimssize; j++)
+			{
+				if (i != j)
+					mas[i][j] = pow(pow(aims[i - 1].getX() - aims[j - 1].getX(), 2) + pow(aims[i - 1].getY() - aims[j - 1].getY(), 2), 0.5);
+					//cout << (mas[i][j] = pow(pow(aims[i - 1].getX() - aims[j - 1].getX(), 2) + pow(aims[i - 1].getY() - aims[j - 1].getY(), 2), 0.5)) << " ";
+				else
+					mas[i][j] = max;
+				min1 = min(min1, mas[i][j]);
+				mas2[i][j] = mas[i][j];
+			}
+			g[i] = min1;
+			mas[i][0] = pow(pow(x - aims[i - 1].getX(), 2) + pow(y - aims[i - 1].getY(), 2), 0.5);
+			mas[0][i] = mas[i][0];
+			mas2[0][i] = mas[0][i];
+			mas2[i][0] = mas[i][0];
+			g[0] = min(g[0], mas[0][i]);
+			h[0] = min(h[0], mas[i][0]);
 		}
-		mark[0] = 0; milel1 = max; minel2 = max;
-		for(i = 0; i <= aims.size(); i++)
-			for(j = 0; j <= aims.size(); j++)
-				mas2[i][j] -= h[j];
-		for(i = 0; i <= aims.size(); i++)
-			for(j = 0; j <= aims.size(); j++)
-				if (mas2[i][j] == 0)
+		cout << '\n';
+		mas[0][0] = max;
+		mas2[0][0] = max;	
+		while (column.size() != 1)
+		{
+			iter = column.size();
+			/*sleep(1);
+			for(i = 0; i < iter; i++)
+			{
+				for(j = 0; j < iter; j++)
+					cout <<  mas2[line[i]][column[j]] << " ";
+				cout << '\n';
+			}
+			cout << '\n' << '\n' << '\n';*/
+			for(i = 0; i < iter; i++)
+			{
+				min1 = max;
+				for(j = 0; j < iter; j++)
+					min1 = min(min1, mas2[line[i]][column[j]]);
+				g[line[i]] = min1;
+				for(j = 0; j < iter; j++)
+					mas2[line[i]][column[j]] -= g[line[i]];
+			}
+			for(i = 0; i < iter; i++)
+			{
+				min2 = max;
+				for(j = 0; j < iter; j++)
+					min2 = min(min2, mas2[line[j]][column[i]]);
+				h[column[i]] = min2;
+				for(j = 0; j < iter; j++)
+					mas2[line[j]][column[i]] -= h[column[i]];
+			}
+			mark[0] = -1; minel1 = max; minel2 = max;
+			for(i = 0; i < iter; i++)
+				for(j = 0; j < iter; j++)
+					if (mas2[line[i]][column[j]] == 0)
+					{
+						for (k = 0; k < iter; k++)
+						{
+							if (mas2[line[i]][column[k]] < minel1 && k != j)
+								minel1 = mas2[line[i]][column[k]];
+							if (mas2[line[k]][column[j]] < minel2 && k != i)
+								minel2 = mas2[line[k]][column[j]];
+						}
+						if (mark[0] < minel1 + minel2)
+						{
+							mark[0] = minel1 + minel2;
+							mark[1] = line[i]; mark[2] = column[j];
+						}
+					}
+			from.push_back((int)mark[1]);
+			to.push_back((int)mark[2]);
+			mas2[(int)mark[2]][(int)mark[1]] = max;
+			for(i = 0; i < iter; i++)
+				if (column[i] == (int)mark[2])
 				{
-					for (int d = 0; g <= aims.size(); d++)
-					{
-						if (mas2[i][d] < minel1 && d != j)
-							minel1 = mas2[i][d];
-						if (mas2[d][j] < minel2 && d != i)
-							minel2 = mas2[d][j];
-					}
-					if (mark < minel1 + minel2)
-					{
-						mark[0] = minel1 + minel2;
-						mark[1] = i; mark[2] = j;
-					}
+					column.erase(column.begin() + i);
+					break;
 				}
-		answer.push_back({mark[1], mark[2]});
-		mas2[mark[2]][mark[1]] = max;
+			for(i = 0; i < iter; i++)
+				if (line[i] == (int)mark[1])
+				{
+					line.erase(line.begin() + i);
+					break;
+				}
+		}
+		from.push_back(line[0]);
+		to.push_back(column[0]);
+		points.push_back(Object(x, y));
+		k = 0;
+		for(j = 0; j < from.size(); j++)
+			cout << from[j] << "  ";
+		cout << '\n';
+		for(j = 0; j < to.size(); j++)
+			cout << to[j] << "  ";
+		cout << '\n'; cout << '\n';
+		while (k != -1)
+			for(j = 0; j < from.size(); j++)
+				if (from[j] == k)
+				{
+					if (to[j] != 0)
+					{
+						k = to[j];
+						points.push_back(aims[to[j] - 1]);
+					}
+					else
+						k = -1;
+				}
+		points.push_back(Object(x, y));
+		for(i = 0; i < points.size(); i++)
+			cout << points[i].getX() << "; " <<  points[i].getY() << '\n';
+		for(i = 0; i <= aimssize; i++)
+		{
+			delete []mas[i]; delete []mas2[i];
+		}
+		delete []mas; delete []mas2;
+		delete []g; delete []h;
 	}
-	
 };
 void UAV::elaborateRoat(vector<GeoObject> objects)
 {
