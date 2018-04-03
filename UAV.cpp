@@ -36,7 +36,7 @@ float UAV::getY()
 };
 void UAV::roat(vector<Aim> aims)
 {
-	int i, j, aimssize = aims.size(), iter, k, max = pow(10, 10);
+	int i, j, aimssize = aims.size(), iter, k, max = (int)pow(10, 10);
 	if (aimssize == 1 || aimssize == 2)
 	{
 		points.push_back(Object(x, y));
@@ -52,7 +52,6 @@ void UAV::roat(vector<Aim> aims)
 		float min1, min2, mark[3], minel1, minel2;
 		vector<int> column, line;
 		vector<int> from, to;
-		//cout << "point1 " << aims.size() << '\n';
 		for(i = 0; i <= aimssize; i++)
 		{
 			mas[i] = new float[aimssize + 1];
@@ -61,13 +60,11 @@ void UAV::roat(vector<Aim> aims)
 		}
 		for(i = 1; i <= aimssize; i++)
 		{
-			cout << aims[i - 1].getX() << "; " << aims[i - 1].getY() << "       ";
 			min1 = max;
 			for(j = 1; j <= aimssize; j++)
 			{
 				if (i != j)
 					mas[i][j] = pow(pow(aims[i - 1].getX() - aims[j - 1].getX(), 2) + pow(aims[i - 1].getY() - aims[j - 1].getY(), 2), 0.5);
-					//cout << (mas[i][j] = pow(pow(aims[i - 1].getX() - aims[j - 1].getX(), 2) + pow(aims[i - 1].getY() - aims[j - 1].getY(), 2), 0.5)) << " ";
 				else
 					mas[i][j] = max;
 				min1 = min(min1, mas[i][j]);
@@ -81,20 +78,11 @@ void UAV::roat(vector<Aim> aims)
 			g[0] = min(g[0], mas[0][i]);
 			h[0] = min(h[0], mas[i][0]);
 		}
-		cout << '\n';
 		mas[0][0] = max;
 		mas2[0][0] = max;	
 		while (column.size() != 1)
 		{
 			iter = column.size();
-			/*sleep(1);
-			for(i = 0; i < iter; i++)
-			{
-				for(j = 0; j < iter; j++)
-					cout <<  mas2[line[i]][column[j]] << " ";
-				cout << '\n';
-			}
-			cout << '\n' << '\n' << '\n';*/
 			for(i = 0; i < iter; i++)
 			{
 				min1 = max;
@@ -113,11 +101,12 @@ void UAV::roat(vector<Aim> aims)
 				for(j = 0; j < iter; j++)
 					mas2[line[j]][column[i]] -= h[column[i]];
 			}
-			mark[0] = -1; minel1 = max; minel2 = max;
+			mark[0] = -1;
 			for(i = 0; i < iter; i++)
 				for(j = 0; j < iter; j++)
 					if (mas2[line[i]][column[j]] == 0)
 					{
+						minel1 = max; minel2 = max;
 						for (k = 0; k < iter; k++)
 						{
 							if (mas2[line[i]][column[k]] < minel1 && k != j)
@@ -151,12 +140,6 @@ void UAV::roat(vector<Aim> aims)
 		to.push_back(column[0]);
 		points.push_back(Object(x, y));
 		k = 0;
-		for(j = 0; j < from.size(); j++)
-			cout << from[j] << "  ";
-		cout << '\n';
-		for(j = 0; j < to.size(); j++)
-			cout << to[j] << "  ";
-		cout << '\n'; cout << '\n';
 		while (k != -1)
 			for(j = 0; j < from.size(); j++)
 				if (from[j] == k)
@@ -170,8 +153,6 @@ void UAV::roat(vector<Aim> aims)
 						k = -1;
 				}
 		points.push_back(Object(x, y));
-		for(i = 0; i < points.size(); i++)
-			cout << points[i].getX() << "; " <<  points[i].getY() << '\n';
 		for(i = 0; i <= aimssize; i++)
 		{
 			delete []mas[i]; delete []mas2[i];
