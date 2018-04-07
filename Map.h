@@ -8,6 +8,10 @@ class Map
 	vector<Aim> aims;
 	vector<UAV> uavs;
 public:
+	float operator[](int a);
+	vector<UAV> getUAV();
+	vector<GeoObject> getO();
+	vector<Aim> getA();
 	Map(float nx1, float nx2, float ny1, float ny2); //первичная инициализация
 	void addObject(GeoObject newGO); 
 	void addAim(Aim newAim);

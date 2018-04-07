@@ -53,15 +53,28 @@ void Map::addUAV(UAV newUAV)
 void Map::readGIS(string file)
 {
 };
+float Map::operator[](int a)
+{
+	if (a == 0)
+		return x1;
+	if (a == 1)
+		return x2;
+	if (a == 2)
+		return y1;
+	else
+		return y2;
+};
 void Map::divideTer()
 {
 	vector<Line> k;
 	vector<Object> dirs;
 	float dk;
 	float dxy = (x2 - x1 + y2 - y1)/10;
+	int count, slot;
 	if (allUVAtogether())
 	{
 		int aimsInSector = aims.size()/uavs.size(); //что будем делать с углами, близкими к 90?
+		slot = aims.size()%uavs.size();
 		for (int i = 0; i < uavs.size(); i++)
 		{
 			dk = i*360.0/(uavs.size());
@@ -76,29 +89,47 @@ void Map::divideTer()
 				k[i].setK(k[i - 1][0]);
 				k[i].setB(k[i - 1][1]);
 			}
-			while (calcAims(k[i - 1][0], k[i - 1][1], k[i][0], k[i][1], dirs[i - 1]) < aimsInSector) // пересчитывать направление
+			while (count = calcAims(k[i - 1][0], k[i - 1][1], k[i][0], k[i][1], dirs[i - 1]) < aimsInSector) // пересчитывать направление
 			{
 				k[i].setK(k[i][0] + pi/180);//подумать, какой будет сдвиг для луча
 				k[i].setB(uavs[0].getY() - uavs[0].getX()*tan(k[i][0]));
 				dirs[i - 1].setX(uavs[0].getX() + cos(k[i - 1][0] + (k[i][0] - k[i - 1][0])/2)*dxy);
 				dirs[i - 1].setY(uavs[0].getY() + sin(k[i - 1][0] + (k[i][0] - k[i - 1][0])/2)*dxy); 
+				if (count == aimsInSector)
+				{
+					k[i].setK(k[i][0] + pi/180);//подумать, какой будет сдвиг для луча
+					k[i].setB(uavs[0].getY() - uavs[0].getX()*tan(k[i][0]));
+					dirs[i - 1].setX(uavs[0].getX() + cos(k[i - 1][0] + (k[i][0] - k[i - 1][0])/2)*dxy);
+					dirs[i - 1].setY(uavs[0].getY() + sin(k[i - 1][0] + (k[i][0] - k[i - 1][0])/2)*dxy); 
+				}
 			}
-			while (calcAims(k[i - 1][0], k[i - 1][1], k[i][0], k[i][1], dirs[i - 1]) > aimsInSector + 1)
+			while (count = calcAims(k[i - 1][0], k[i - 1][1], k[i][0], k[i][1], dirs[i - 1]) > aimsInSector + (slot > 0 ? 1 : 0))
 			{
 				k[i].setK(k[i][0] - pi/180);
 				k[i].setB(uavs[0].getY() - uavs[0].getX()*tan(k[i][0]));
 				dirs[i - 1].setX(uavs[0].getX() + cos(k[i - 1][0] + (k[i][0] - k[i - 1][0])/2)*dxy);
 				dirs[i - 1].setY(uavs[0].getY() + sin(k[i - 1][0] + (k[i][0] - k[i - 1][0])/2)*dxy); 
+				if (count == aimsInSector + 1)
+				{
+					k[i].setK(k[i][0] - pi/180);//подумать, какой будет сдвиг для луча
+					k[i].setB(uavs[0].getY() - uavs[0].getX()*tan(k[i][0]));
+					dirs[i - 1].setX(uavs[0].getX() + cos(k[i - 1][0] + (k[i][0] - k[i - 1][0])/2)*dxy);
+					dirs[i - 1].setY(uavs[0].getY() + sin(k[i - 1][0] + (k[i][0] - k[i - 1][0])/2)*dxy); 
+					slot --;
+				}
 			}
 		}
-		dirs.push_back(Object(uavs[0].getX() + cos(k[uavs.size() - 1][0] + (2*pi - k[uavs.size() - 1][0])/2)*dxy, uavs[0].getY() + sin(k[uavs.size() - 1][0] + (2*pi - k[uavs.size() - 1][0])/2)*dxy));
+		dirs.push_back(Object(uavs[0].getX() + cos((2*pi + k[uavs.size() - 1][0])/2)*dxy, uavs[0].getY() + sin((2*pi + k[uavs.size() - 1][0])/2)*dxy));
+		//cout <<  '\n' <<"last direction" <<  k[uavs.size() - 1][0]*180/pi << "    " << dirs.back().getX() << "; " << dirs.back().getY() << '\n';
 		for (int i = 0; i < uavs.size() - 1; i++)
 		{
+			cout << '\n' << i << ":   " << (aimsForUAV(k[i][0], k[i][1], k[i + 1][0], k[i + 1][1], dirs[i])).size() << '\n';
 			uavs[i].roat(aimsForUAV(k[i][0], k[i][1], k[i + 1][0], k[i + 1][1], dirs[i]));
-			//uavs[i].elaborateRoat(goForUAV(k[i][0], k[i][1], k[i + 1][0], k[i + 1][1], dirs[i]));
+			uavs[i].elaborateRoat(goForUAV(k[i][0], k[i][1], k[i + 1][0], k[i + 1][1], dirs[i]));
 		}
-		uavs[uavs.size() - 1].roat(aimsForUAV(k[uavs.size() - 1][0], k[uavs.size() - 1][1], 2*pi + k[0][0], k[0][1], dirs[uavs.size() - 1]));
-		//uavs[i].elaborateRoat(goForUAV(k[i][0], k[i][1], k[i + 1][0], k[i + 1][1], dirs[i]));
+		cout << '\n' << uavs.size() - 1 << ":   " << (aimsForUAV(k[uavs.size() - 1][0], k[uavs.size() - 1][1], 2*pi + k[0][0], k[0][1], dirs[uavs.size() - 1])).size() << '\n';
+		uavs[uavs.size() - 1].roat(aimsForUAV(k[uavs.size() - 1][0], k[uavs.size() - 1][1], 2*pi + k[0][0], k[0][1], dirs.back()));
+		uavs[uavs.size() - 1].elaborateRoat(goForUAV(k[uavs.size() - 1][0], k[uavs.size() - 1][1], 2*pi + k[0][0], k[0][1], dirs[uavs.size() - 1]));
 	}
 	else
 	{
@@ -148,7 +179,7 @@ vector<Aim> Map::aimsForUAV(float k1, float b1, float k2, float b2, Object dir)
 vector<GeoObject> Map::goForUAV(float k1, float b1, float k2, float b2, Object dir)
 {
 	vector<GeoObject> sum;
-	float x13, x23, y13, y23;
+	float x13, x23, y13, y23, k13, k23;
 	Object centr((b2 - b1)/(tan(k1) - tan(k2)), tan(k1)*(b2 - b1)/(tan(k1) - tan(k2)) + b1);
 	for (int i = 0; i < objects.size(); i++)
 	{
@@ -156,12 +187,23 @@ vector<GeoObject> Map::goForUAV(float k1, float b1, float k2, float b2, Object d
 		x23 = (objects[i].getY() - objects[i].getX()*(dir.getY() - objects[i].getY())/(dir.getX() - objects[i].getX()) - b2)/(tan(k2) - (dir.getY() - objects[i].getY())/(dir.getX() - objects[i].getX()));
 		y13 = tan(k1)*x13 + b1;
 		y23 = tan(k2)*x23 + b2;
-		if ((y13 <= min(objects[i].getY(), dir.getY()) || y13 >= max(objects[i].getY(), dir.getY())) && (y23 <= min(objects[i].getY(), dir.getY()) || y23 >= max(objects[i].getY(), dir.getY())) && (x13 <= min(objects[i].getX(), dir.getX()) || x13 >= max(objects[i].getX(), dir.getX())) && (x23 <= min(objects[i].getX(), dir.getX()) || x23 >= max(objects[i].getX(), dir.getX())))
+		//if ((y13 <= min(objects[i].getY(), dir.getY()) || y13 >= max(objects[i].getY(), dir.getY())) && (y23 <= min(objects[i].getY(), dir.getY()) || y23 >= max(objects[i].getY(), dir.getY())) && (x13 <= min(objects[i].getX(), dir.getX()) || x13 >= max(objects[i].getX(), dir.getX())) && (x23 <= min(objects[i].getX(), dir.getX()) || x23 >= max(objects[i].getX(), dir.getX())))
+		if (!(y13 >= min(objects[i].getY(), dir.getY()) && y13 <= max(objects[i].getY(), dir.getY())) && !(y23 >= min(objects[i].getY(), dir.getY()) && y23 <= max(objects[i].getY(), dir.getY())) && !(x13 >= min(objects[i].getX(), dir.getX()) && x13 <= max(objects[i].getX(), dir.getX())) && !(x23 >= min(objects[i].getX(), dir.getX()) && x23 <= max(objects[i].getX(), dir.getX())))
 			sum.push_back(objects[i]);
 	}
 	return sum;
 };
-
-
+vector<UAV> Map::getUAV()
+{
+	return uavs;
+};
+vector<GeoObject> Map::getO()
+{
+	return objects;
+};
+vector<Aim> Map::getA()
+{
+	return aims;
+};
 
 

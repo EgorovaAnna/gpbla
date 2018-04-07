@@ -57,14 +57,16 @@ void UAV::roat(vector<Aim> aims)
 			mas[i] = new float[aimssize + 1];
 			mas2[i] = new float[aimssize + 1];
 			column.push_back(i); line.push_back(i);
+			cout << aims[i].getX() << "; " << aims[i].getY() << "       ";
 		}
+		cout << '\n' << '\n' << '\n';
 		for(i = 1; i <= aimssize; i++)
 		{
 			min1 = max;
 			for(j = 1; j <= aimssize; j++)
 			{
 				if (i != j)
-					mas[i][j] = pow(pow(aims[i - 1].getX() - aims[j - 1].getX(), 2) + pow(aims[i - 1].getY() - aims[j - 1].getY(), 2), 0.5);
+					mas[i][j] = aims[i - 1].distance(aims[j - 1]); //pow(pow(aims[i - 1].getX() - aims[j - 1].getX(), 2) + pow(aims[i - 1].getY() - aims[j - 1].getY(), 2), 0.5);
 				else
 					mas[i][j] = max;
 				min1 = min(min1, mas[i][j]);
@@ -163,4 +165,34 @@ void UAV::roat(vector<Aim> aims)
 };
 void UAV::elaborateRoat(vector<GeoObject> objects)
 {
+	cout << '\n' << "___UAV___"  << '\n';
+	vector<Object> roating(points);
+	//for (int i = 0; i < objects.size(); i++)
+	//	cout << objects[i].getX() << "; " << objects[i].getY() << "     ";
+	//cout << '\n' << "_____"  << '\n' << "points:  ";
+	//for (int i = 0; i < points.size(); i++)
+	//	cout << points[i].getX() << "; " << points[i].getY() << "     ";
+	//cout << '\n' << "_____"  << '\n';
+	vector<GeoObject> onway;
+	points.clear();
+	for (int i = 0; i < roating.size() - 1; i++)
+	{
+		points.push_back(roating[i]);
+		for (int j = 0; j < objects.size(); j++)
+			if (objects[j].onWay(points.back().getX(), points.back().getY(), roating[i + 1].getX(), roating[i + 1].getY()))
+				onway.push_back(objects[j]);
+		sort(onway.begin(), onway.end(), points.back());
+		for (int j = 0; j < onway.size(); j++)
+			if (onway[j].onWay(points.back().getX(), points.back().getY(), roating[i + 1].getX(), roating[i + 1].getY()))
+				points.push_back(onway[j].point(points.back().getX(), points.back().getY(), roating[i + 1].getX(), roating[i + 1].getY()));
+		onway.clear();
+	}
+	points.push_back(roating.back());
+	//cout << '\n' << "_____"  << '\n' << "points1:  ";
+	for (int i = 0; i < points.size(); i++)
+		cout << points[i].getX() << "; " << points[i].getY() << "    ";
+};
+vector<Object> UAV::getRoat()
+{
+	return points;
 };

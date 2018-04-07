@@ -2,6 +2,7 @@
 #include "PVO.h"
 #include "ChangeHeight.h"
 #include <unistd.h>
+#include <algorithm>
 
 
 class UAV
@@ -23,4 +24,6 @@ public:
 	float getY();
 	void roat(vector<Aim> aims); //метод ветвей и границ
 	void elaborateRoat(vector<GeoObject> objects); //уточнение траекторий
+	vector<Object> getRoat();
 };
+

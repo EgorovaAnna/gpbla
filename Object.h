@@ -23,6 +23,9 @@ public:
 	float getY();
 	void setX(float nx);
 	void setY(float ny);
+	bool operator()(Object a, Object b);
+	float distance(Object b);
+	float distanceXY(float x, float y);
 };
 class Line
 {
