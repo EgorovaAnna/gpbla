@@ -57,9 +57,7 @@ void UAV::roat(vector<Aim> aims)
 			mas[i] = new float[aimssize + 1];
 			mas2[i] = new float[aimssize + 1];
 			column.push_back(i); line.push_back(i);
-			cout << aims[i].getX() << "; " << aims[i].getY() << "       ";
 		}
-		cout << '\n' << '\n' << '\n';
 		for(i = 1; i <= aimssize; i++)
 		{
 			min1 = max;
@@ -165,14 +163,11 @@ void UAV::roat(vector<Aim> aims)
 };
 void UAV::elaborateRoat(vector<GeoObject> objects)
 {
-	cout << '\n' << "___UAV___"  << '\n';
+	//cout << '\n' << "___UAV___"  << '\n';
 	vector<Object> roating(points);
 	//for (int i = 0; i < objects.size(); i++)
 	//	cout << objects[i].getX() << "; " << objects[i].getY() << "     ";
 	//cout << '\n' << "_____"  << '\n' << "points:  ";
-	//for (int i = 0; i < points.size(); i++)
-	//	cout << points[i].getX() << "; " << points[i].getY() << "     ";
-	//cout << '\n' << "_____"  << '\n';
 	vector<GeoObject> onway;
 	points.clear();
 	for (int i = 0; i < roating.size() - 1; i++)
@@ -189,8 +184,8 @@ void UAV::elaborateRoat(vector<GeoObject> objects)
 	}
 	points.push_back(roating.back());
 	//cout << '\n' << "_____"  << '\n' << "points1:  ";
-	for (int i = 0; i < points.size(); i++)
-		cout << points[i].getX() << "; " << points[i].getY() << "    ";
+	//for (int i = 0; i < points.size(); i++)
+	//	cout << points[i].getX() << "; " << points[i].getY() << "    ";
 };
 vector<Object> UAV::getRoat()
 {

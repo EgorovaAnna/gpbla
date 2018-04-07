@@ -66,7 +66,7 @@ float Map::operator[](int a)
 };
 void Map::divideTer()
 {
-	vector<Line> k;
+	//vector<Line> k;
 	vector<Object> dirs;
 	float dk;
 	float dxy = (x2 - x1 + y2 - y1)/10;
@@ -120,16 +120,47 @@ void Map::divideTer()
 			}
 		}
 		dirs.push_back(Object(uavs[0].getX() + cos((2*pi + k[uavs.size() - 1][0])/2)*dxy, uavs[0].getY() + sin((2*pi + k[uavs.size() - 1][0])/2)*dxy));
-		//cout <<  '\n' <<"last direction" <<  k[uavs.size() - 1][0]*180/pi << "    " << dirs.back().getX() << "; " << dirs.back().getY() << '\n';
 		for (int i = 0; i < uavs.size() - 1; i++)
 		{
-			cout << '\n' << i << ":   " << (aimsForUAV(k[i][0], k[i][1], k[i + 1][0], k[i + 1][1], dirs[i])).size() << '\n';
-			uavs[i].roat(aimsForUAV(k[i][0], k[i][1], k[i + 1][0], k[i + 1][1], dirs[i]));
-			uavs[i].elaborateRoat(goForUAV(k[i][0], k[i][1], k[i + 1][0], k[i + 1][1], dirs[i]));
+			if (k[i + 1][0] - k[i][0] >= pi)
+			{
+				Object d1(uavs[0].getX() + cos(k[i][0] + (k[i + 1][0] - k[i][0])/4)*dxy, uavs[0].getY() + sin(k[i][0] + (k[i + 1][0] - k[i][0])/4)*dxy), d2(uavs[0].getX() + cos(k[i][0] + 3*(k[i + 1][0] - k[i][0])/4)*dxy, uavs[0].getY() + sin(k[i][0] + 3*(k[i + 1][0] - k[i][0])/4)*dxy);
+				vector<Aim> ai2, ai = aimsForUAV(k[i][0], k[i][1], (k[i + 1][0] + k[i][0])/2, uavs[0].getY() - uavs[0].getX()*tan((k[i + 1][0] + k[i][0])/2), dirs[i]);
+				ai2 = aimsForUAV((k[i + 1][0] + k[i][0])/2, uavs[0].getY() - uavs[0].getX()*tan((k[i + 1][0] + k[i][0])/2), k[i + 1][0], k[i + 1][1], dirs[i]);
+				ai.insert(ai.end(), ai2.begin(), ai2.end());
+				uavs[i].roat(ai);
+				vector<GeoObject> go2, go = goForUAV(k[i][0], k[i][1], (k[i + 1][0] + k[i][0])/2, uavs[0].getY() - uavs[0].getX()*tan((k[i + 1][0] + k[i][0])/2), dirs[i]);
+				go2 = goForUAV((k[i + 1][0] + k[i][0])/2, uavs[0].getY() - uavs[0].getX()*tan((k[i + 1][0] + k[i][0])/2), k[i + 1][0], k[i + 1][1], dirs[i]);
+				go.insert(go.end(), go2.begin(), go2.end());
+				uavs[i].elaborateRoat(go);
+				ai.clear(); ai2.clear();
+				go.clear(); go2.clear();
+			}
+			else
+			{
+				uavs[i].roat(aimsForUAV(k[i][0], k[i][1], k[i + 1][0], k[i + 1][1], dirs[i]));
+				uavs[i].elaborateRoat(goForUAV(k[i][0], k[i][1], k[i + 1][0], k[i + 1][1], dirs[i]));
+			}
 		}
-		cout << '\n' << uavs.size() - 1 << ":   " << (aimsForUAV(k[uavs.size() - 1][0], k[uavs.size() - 1][1], 2*pi + k[0][0], k[0][1], dirs[uavs.size() - 1])).size() << '\n';
-		uavs[uavs.size() - 1].roat(aimsForUAV(k[uavs.size() - 1][0], k[uavs.size() - 1][1], 2*pi + k[0][0], k[0][1], dirs.back()));
-		uavs[uavs.size() - 1].elaborateRoat(goForUAV(k[uavs.size() - 1][0], k[uavs.size() - 1][1], 2*pi + k[0][0], k[0][1], dirs[uavs.size() - 1]));
+		if (2*pi + k[0][0] - k[uavs.size() - 1][0] >= pi)
+		{
+			Object d1(uavs[0].getX() + cos(k[uavs.size() - 1][0] + (2*pi - k[uavs.size() - 1][0])/4)*dxy, uavs[0].getY() + sin(k[uavs.size() - 1][0] + (2*pi - k[uavs.size() - 1][0])/4)*dxy), d2(uavs[0].getX() + cos(k[uavs.size() - 1][0] + 3*(2*pi - k[uavs.size() - 1][0])/4)*dxy, uavs[0].getY() + sin(k[uavs.size() - 1][0] + 3*(2*pi - k[uavs.size() - 1][0])/4)*dxy);
+			vector<Aim> ai2, ai = aimsForUAV(k[uavs.size() - 1][0], k[uavs.size() - 1][1], (2*pi + k[0][0] + k[uavs.size() - 1][0])/2, uavs[0].getY() - uavs[0].getX()*tan((2*pi + k[0][0] + k[uavs.size() - 1][0])/2), d1);
+			ai2 = aimsForUAV((2*pi + k[0][0] + k[uavs.size() - 1][0])/2, uavs[0].getY() - uavs[0].getX()*tan((2*pi + k[0][0] + k[uavs.size() - 1][0])/2), 2*pi + k[0][0], k[0][1], d2);
+			ai.insert(ai.end(), ai2.begin(), ai2.end());
+			uavs[uavs.size() - 1].roat(ai);
+			vector<GeoObject> go2, go = goForUAV(k[uavs.size() - 1][0], k[uavs.size() - 1][1], (2*pi + k[0][0] + k[uavs.size() - 1][0])/2, uavs[0].getY() - uavs[0].getX()*tan((2*pi + k[0][0] + k[uavs.size() - 1][0])/2), d1);
+			go2 = goForUAV((2*pi + k[0][0] + k[uavs.size() - 1][0])/2, uavs[0].getY() - uavs[0].getX()*tan((2*pi + k[0][0] + k[uavs.size() - 1][0])/2), 2*pi + k[0][0], k[0][1], d2);
+			go.insert(go.end(), go2.begin(), go2.end());
+			uavs[uavs.size() - 1].elaborateRoat(go);
+			ai.clear(); ai2.clear();
+			go.clear(); go2.clear();
+		}
+		else
+		{
+			uavs[uavs.size() - 1].roat(aimsForUAV(k[uavs.size() - 1][0], k[uavs.size() - 1][1], 2*pi + k[0][0], k[0][1], dirs.back()));
+			uavs[uavs.size() - 1].elaborateRoat(goForUAV(k[uavs.size() - 1][0], k[uavs.size() - 1][1], 2*pi + k[0][0], k[0][1], dirs.back()));
+		}
 	}
 	else
 	{
@@ -163,23 +194,29 @@ int Map::calcAims(float k1, float b1, float k2, float b2, Object dir)
 vector<Aim> Map::aimsForUAV(float k1, float b1, float k2, float b2, Object dir)
 {
 	vector<Aim> sum;
-	float x13, x23, y13, y23;
+	float x13, x23, y13, y23, k, b;
 	Object centr((b2 - b1)/(tan(k1) - tan(k2)), tan(k1)*(b2 - b1)/(tan(k1) - tan(k2)) + b1);
 	for (int i = 0; i < aims.size(); i++)
 	{
-		x13 = (aims[i].getY() - aims[i].getX()*(dir.getY() - aims[i].getY())/(dir.getX() - aims[i].getX()) - b1)/(tan(k1) - (dir.getY() - aims[i].getY())/(dir.getX() - aims[i].getX()));
-		x23 = (aims[i].getY() - aims[i].getX()*(dir.getY() - aims[i].getY())/(dir.getX() - aims[i].getX()) - b2)/(tan(k2) - (dir.getY() - aims[i].getY())/(dir.getX() - aims[i].getX()));
-		y13 = tan(k1)*x13 + b1;
-		y23 = tan(k2)*x23 + b2;
+		k = (dir.getY() - aims[i].getY())/(dir.getX() - aims[i].getX());
+		b = aims[i].getY() - aims[i].getX()*k;
+		x13 = (b - b1)/(tan(k1) - k);
+		x23 = (b - b2)/(tan(k2) - k);
+		y13 = tan(k)*x13 + b;
+		y23 = tan(k)*x23 + b;
+		if(fabs(tan(k1)) > fabs(k))
+			y13 = tan(k1)*x13 + b1;
+		if(fabs(tan(k2)) > fabs(k))
+			y13 = tan(k2)*x23 + b2;
 		if ((y13 <= min(aims[i].getY(), dir.getY()) || y13 >= max(aims[i].getY(), dir.getY())) && (y23 <= min(aims[i].getY(), dir.getY()) || y23 >= max(aims[i].getY(), dir.getY())) && (x13 <= min(aims[i].getX(), dir.getX()) || x13 >= max(aims[i].getX(), dir.getX())) && (x23 <= min(aims[i].getX(), dir.getX()) || x23 >= max(aims[i].getX(), dir.getX())))
-			sum.push_back(aims[i]);
+			sum.push_back(aims[i]); 
 	}
 	return sum;
 };
 vector<GeoObject> Map::goForUAV(float k1, float b1, float k2, float b2, Object dir)
 {
 	vector<GeoObject> sum;
-	float x13, x23, y13, y23, k13, k23;
+	/*float x13, x23, y13, y23, k13, k23;
 	Object centr((b2 - b1)/(tan(k1) - tan(k2)), tan(k1)*(b2 - b1)/(tan(k1) - tan(k2)) + b1);
 	for (int i = 0; i < objects.size(); i++)
 	{
@@ -187,8 +224,25 @@ vector<GeoObject> Map::goForUAV(float k1, float b1, float k2, float b2, Object d
 		x23 = (objects[i].getY() - objects[i].getX()*(dir.getY() - objects[i].getY())/(dir.getX() - objects[i].getX()) - b2)/(tan(k2) - (dir.getY() - objects[i].getY())/(dir.getX() - objects[i].getX()));
 		y13 = tan(k1)*x13 + b1;
 		y23 = tan(k2)*x23 + b2;
-		//if ((y13 <= min(objects[i].getY(), dir.getY()) || y13 >= max(objects[i].getY(), dir.getY())) && (y23 <= min(objects[i].getY(), dir.getY()) || y23 >= max(objects[i].getY(), dir.getY())) && (x13 <= min(objects[i].getX(), dir.getX()) || x13 >= max(objects[i].getX(), dir.getX())) && (x23 <= min(objects[i].getX(), dir.getX()) || x23 >= max(objects[i].getX(), dir.getX())))
 		if (!(y13 >= min(objects[i].getY(), dir.getY()) && y13 <= max(objects[i].getY(), dir.getY())) && !(y23 >= min(objects[i].getY(), dir.getY()) && y23 <= max(objects[i].getY(), dir.getY())) && !(x13 >= min(objects[i].getX(), dir.getX()) && x13 <= max(objects[i].getX(), dir.getX())) && !(x23 >= min(objects[i].getX(), dir.getX()) && x23 <= max(objects[i].getX(), dir.getX())))
+		*/
+	float x13, x23, y13, y23, k, b;
+	Object centr((b2 - b1)/(tan(k1) - tan(k2)), tan(k1)*(b2 - b1)/(tan(k1) - tan(k2)) + b1);
+	k1 -= 5*pi/180; k2 += 5*pi/180;
+	b1 = centr.getY() - centr.getX()*k1; b2 = centr.getY() - centr.getX()*k2; 
+	for (int i = 0; i < objects.size(); i++)
+	{
+		k = (dir.getY() - objects[i].getY())/(dir.getX() - objects[i].getX());
+		b = objects[i].getY() - objects[i].getX()*k;
+		x13 = (b - b1)/(tan(k1) - k);
+		x23 = (b - b2)/(tan(k2) - k);
+		y13 = tan(k)*x13 + b;
+		y23 = tan(k)*x23 + b;
+		if(fabs(tan(k1)) > fabs(k))
+			y13 = tan(k1)*x13 + b1;
+		if(fabs(tan(k2)) > fabs(k))
+			y13 = tan(k2)*x23 + b2;
+		if ((y13 <= min(objects[i].getY(), dir.getY()) || y13 >= max(objects[i].getY(), dir.getY())) && (y23 <= min(objects[i].getY(), dir.getY()) || y23 >= max(objects[i].getY(), dir.getY())) && (x13 <= min(objects[i].getX(), dir.getX()) || x13 >= max(objects[i].getX(), dir.getX())) && (x23 <= min(objects[i].getX(), dir.getX()) || x23 >= max(objects[i].getX(), dir.getX())))
 			sum.push_back(objects[i]);
 	}
 	return sum;
@@ -205,5 +259,8 @@ vector<Aim> Map::getA()
 {
 	return aims;
 };
-
+vector<Line> Map::getK()
+{
+	return k;
+};
 

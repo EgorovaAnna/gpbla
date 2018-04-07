@@ -35,10 +35,10 @@ void MapImage::paintLine(vector<Object> objects, int color)
 	for (int i = 0; i < objects.size() - 1; i++)
 	{
 		image -> drawLine(points[i].getX(), points[i].getY(), points[i + 1].getX(), points[i + 1].getY(), color);
-		image -> drawLine(points[i].getX(), points[i].getY() - 1, points[i + 1].getX(), points[i + 1].getY() - 1, color);
-		image -> drawLine(points[i].getX(), points[i].getY() + 1, points[i + 1].getX(), points[i + 1].getY() + 1, color);
-		image -> drawLine(points[i].getX() - 1, points[i].getY(), points[i + 1].getX() - 1, points[i + 1].getY(), color);
-		image -> drawLine(points[i].getX() + 1, points[i].getY(), points[i + 1].getX() + 1, points[i + 1].getY(), color);
+		image -> drawLine(points[i].getX(), points[i].getY() - (points[i].getY() == 0 ? 0 : 1), points[i + 1].getX(), points[i + 1].getY() - (points[i + 1].getY() == 0 ? 0 : 1), color);
+		image -> drawLine(points[i].getX(), points[i].getY() + (points[i].getY() == image -> getY() ? 0 : 1), points[i + 1].getX(), points[i + 1].getY() + (points[i + 1].getY() == image -> getY() ? 0 : 1), color);
+		image -> drawLine(points[i].getX() - (points[i].getX() == 0 ? 0 : 1), points[i].getY(), points[i + 1].getX() - (points[i + 1].getX() == 0 ? 0 : 1), points[i + 1].getY(), color);
+		image -> drawLine(points[i].getX() + (points[i].getX() == image -> getX() ? 0 : 1), points[i].getY(), points[i + 1].getX() + (points[i + 1].getX() == image -> getX() ? 0 : 1), points[i + 1].getY(), color);
 	}
 }
 void MapImage::paintObjects(vector<GeoObject> objects, int color)
