@@ -26,11 +26,17 @@ bool GeoObject::onWay(float x1, float y1, float x2, float y2)
 };
 Object GeoObject::point(float x1, float y1, float x2, float y2)
 {
-	if (x1 == x2)
+	if (abs(x1 - x2) <= abs(y1 - y2)/100)
 	{
 		if (x1 - x >= 0)
-			return Object(x + radius*6/5, y);
-		return Object(x - radius*6/5, y);
+			return Object(x + radius*6.0/5.0, y);
+		return Object(x - radius*6.0/5.0, y);
+	}
+	if (abs(y1 - y2) <= abs(x1 - x2)/100)
+	{
+		if (y1 - y >= 0)
+			return Object(x, y + radius*6.0/5.0);
+		return Object(x, y - radius*6.0/5.0);
 	}
 	float k = (y2 - y1)/(x2 - x1);
 	float b = y1 - x1*(y2 - y1)/(x2 - x1);

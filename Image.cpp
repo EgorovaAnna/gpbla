@@ -17,6 +17,14 @@ void Image::paintAll(int color)
 		for(i = 0; i < getX(); i++)
 			image[i][j] = color;
 }
+void Image::paintAll(int a, int b, int c)
+{
+	int i, j, color[3];
+	color[0] = a; color[1] = b; color[2] = c; 
+	for(j = getY() - 1; j >= 0; j--)
+		for(i = 0; i < getX(); i++)
+			image[i][j].init(color);
+}
 int Image::getX()
 {
 	return sizeI[0];

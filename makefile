@@ -1,10 +1,16 @@
 all: test
 	
 test: test.o  Object.o GeoObject.o PVO.o Map.o UAV.o Aim.o ChangeHeight.o MapImage.o Image.o Point.o
-	g++ -o test test.o GeoObject.o Object.o PVO.o Map.o UAV.o Aim.o MapImage.o Image.o Point.o -lm 
+	g++ -o test test.o GeoObject.o Object.o PVO.o Map.o UAV.o Aim.o MapImage.o Image.o Point.o src/*.o -lm 
+	
+test2: test2.o  Object.o GeoObject.o PVO.o Map.o UAV.o Aim.o ChangeHeight.o MapImage.o Image.o Point.o
+	g++ -o test2 test2.o GeoObject.o Object.o PVO.o Map.o UAV.o Aim.o MapImage.o Image.o Point.o src/*.o -lm 
 	
 test.o: test.cpp
 	g++ -c test.cpp
+	
+test2.o: test2.cpp
+	g++ -c test2.cpp
 	
 PVO.o: PVO.cpp PVO.h
 	g++ -c PVO.cpp PVO.h GeoObject.h
@@ -28,13 +34,14 @@ Map.o: Map.cpp Map.h
 	g++ -c Map.cpp Map.h UAV.h Object.h Aim.h
 	
 MapImage.o: MapImage.cpp MapImage.h
-	g++ -c MapImage.cpp MapImage.h Map.h Image.h
+	g++ -c MapImage.cpp MapImage.h Map.h Image.h src/interpolation.h
 
 Image.o: Image.cpp Image.h
 	g++ -c Image.cpp Image.h Point.h
 	
 Point.o: Point.cpp Point.h
 	g++ -c Point.cpp Point.h
+	
 
 clear:
 	rm *.o *.gch

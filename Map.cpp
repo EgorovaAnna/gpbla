@@ -68,102 +68,118 @@ void Map::divideTer()
 {
 	//vector<Line> k;
 	vector<Object> dirs;
+	int aimsInSector = aims.size()/uavs.size(), aimssize = aims.size(), uavssize = uavs.size();
+	Object centre((x2 + x1)/2, (y2 + y1)/2);
 	float dk;
-	float dxy = (x2 - x1 + y2 - y1)/10;
+	float dxy = (x2 - x1 + y2 - y1)/10, xx = 0, yy = 0;
 	int count, slot;
 	if (allUVAtogether())
 	{
-		int aimsInSector = aims.size()/uavs.size(); //что будем делать с углами, близкими к 90?
-		slot = aims.size()%uavs.size();
-		for (int i = 0; i < uavs.size(); i++)
+		centre.setX(uavs[0].getX());
+		centre.setY(uavs[0].getY());
+	}
+	else
+	{
+		k.clear();
+		dirs.clear();
+		for(int i = 0; i < uavssize; i++)
 		{
-			dk = i*360.0/(uavs.size());
-			k.push_back(Line(dk*pi/180, uavs[0].getY() - uavs[0].getX()*tan(dk*pi/180)));
-			if (i > 0)
-				dirs.push_back(Object(uavs[0].getX() + cos(k[i - 1][0] + (k[i][0] - k[i - 1][0])/2)*dxy, uavs[0].getY() + sin(k[i - 1][0] + (k[i][0] - k[i - 1][0])/2)*dxy)); 
+			xx += uavs[i].getX();
+			yy += uavs[i].getY();
 		}
-		for (int i = 1; i < uavs.size(); i++)
+		xx = xx/uavssize;
+		yy = yy/uavssize;
+		centre.setX(xx);
+		centre.setY(yy);
+	}
+	slot = aimssize%uavssize;
+	for (int i = 0; i < uavssize; i++)
+	{
+		dk = i*360.0/(uavssize);
+		k.push_back(Line(dk*pi/180, centre.getY() - centre.getX()*tan(dk*pi/180)));
+		if (i > 0)
+			dirs.push_back(Object(centre.getX() + cos(k[i - 1][0] + (k[i][0] - k[i - 1][0])/2)*dxy, centre.getY() + sin(k[i - 1][0] + (k[i][0] - k[i - 1][0])/2)*dxy)); 
+	}
+	for (int i = 1; i < uavssize; i++)
+	{
+		if (k[i][0] < k[i - 1][0])
 		{
-			if (k[i][0] < k[i - 1][0])
-			{
-				k[i].setK(k[i - 1][0]);
-				k[i].setB(k[i - 1][1]);
-			}
-			while (count = calcAims(k[i - 1][0], k[i - 1][1], k[i][0], k[i][1], dirs[i - 1]) < aimsInSector) // пересчитывать направление
+			k[i].setK(k[i - 1][0]);
+			k[i].setB(k[i - 1][1]);
+		}
+		while (count = calcAims(k[i - 1][0], k[i - 1][1], k[i][0], k[i][1], dirs[i - 1]) < aimsInSector) // пересчитывать направление
+		{
+			k[i].setK(k[i][0] + pi/180);//подумать, какой будет сдвиг для луча
+			k[i].setB(centre.getY() - centre.getX()*tan(k[i][0]));
+			dirs[i - 1].setX(centre.getX() + cos(k[i - 1][0] + (k[i][0] - k[i - 1][0])/2)*dxy);
+			dirs[i - 1].setY(centre.getY() + sin(k[i - 1][0] + (k[i][0] - k[i - 1][0])/2)*dxy); 
+			if (count == aimsInSector)
 			{
 				k[i].setK(k[i][0] + pi/180);//подумать, какой будет сдвиг для луча
-				k[i].setB(uavs[0].getY() - uavs[0].getX()*tan(k[i][0]));
-				dirs[i - 1].setX(uavs[0].getX() + cos(k[i - 1][0] + (k[i][0] - k[i - 1][0])/2)*dxy);
-				dirs[i - 1].setY(uavs[0].getY() + sin(k[i - 1][0] + (k[i][0] - k[i - 1][0])/2)*dxy); 
-				if (count == aimsInSector)
-				{
-					k[i].setK(k[i][0] + pi/180);//подумать, какой будет сдвиг для луча
-					k[i].setB(uavs[0].getY() - uavs[0].getX()*tan(k[i][0]));
-					dirs[i - 1].setX(uavs[0].getX() + cos(k[i - 1][0] + (k[i][0] - k[i - 1][0])/2)*dxy);
-					dirs[i - 1].setY(uavs[0].getY() + sin(k[i - 1][0] + (k[i][0] - k[i - 1][0])/2)*dxy); 
-				}
-			}
-			while (count = calcAims(k[i - 1][0], k[i - 1][1], k[i][0], k[i][1], dirs[i - 1]) > aimsInSector + (slot > 0 ? 1 : 0))
-			{
-				k[i].setK(k[i][0] - pi/180);
-				k[i].setB(uavs[0].getY() - uavs[0].getX()*tan(k[i][0]));
-				dirs[i - 1].setX(uavs[0].getX() + cos(k[i - 1][0] + (k[i][0] - k[i - 1][0])/2)*dxy);
-				dirs[i - 1].setY(uavs[0].getY() + sin(k[i - 1][0] + (k[i][0] - k[i - 1][0])/2)*dxy); 
-				if (count == aimsInSector + 1)
-				{
-					k[i].setK(k[i][0] - pi/180);//подумать, какой будет сдвиг для луча
-					k[i].setB(uavs[0].getY() - uavs[0].getX()*tan(k[i][0]));
-					dirs[i - 1].setX(uavs[0].getX() + cos(k[i - 1][0] + (k[i][0] - k[i - 1][0])/2)*dxy);
-					dirs[i - 1].setY(uavs[0].getY() + sin(k[i - 1][0] + (k[i][0] - k[i - 1][0])/2)*dxy); 
-					slot --;
-				}
+				k[i].setB(centre.getY() - centre.getX()*tan(k[i][0]));
+				dirs[i - 1].setX(centre.getX() + cos(k[i - 1][0] + (k[i][0] - k[i - 1][0])/2)*dxy);
+				dirs[i - 1].setY(centre.getY() + sin(k[i - 1][0] + (k[i][0] - k[i - 1][0])/2)*dxy); 
 			}
 		}
-		dirs.push_back(Object(uavs[0].getX() + cos((2*pi + k[uavs.size() - 1][0])/2)*dxy, uavs[0].getY() + sin((2*pi + k[uavs.size() - 1][0])/2)*dxy));
-		for (int i = 0; i < uavs.size() - 1; i++)
+		while (count = calcAims(k[i - 1][0], k[i - 1][1], k[i][0], k[i][1], dirs[i - 1]) > aimsInSector + (slot > 0 ? 1 : 0))
 		{
-			if (k[i + 1][0] - k[i][0] >= pi)
+			k[i].setK(k[i][0] - pi/180);
+			k[i].setB(centre.getY() - centre.getX()*tan(k[i][0]));
+			dirs[i - 1].setX(centre.getX() + cos(k[i - 1][0] + (k[i][0] - k[i - 1][0])/2)*dxy);
+			dirs[i - 1].setY(centre.getY() + sin(k[i - 1][0] + (k[i][0] - k[i - 1][0])/2)*dxy); 
+			if (count == aimsInSector + 1)
 			{
-				Object d1(uavs[0].getX() + cos(k[i][0] + (k[i + 1][0] - k[i][0])/4)*dxy, uavs[0].getY() + sin(k[i][0] + (k[i + 1][0] - k[i][0])/4)*dxy), d2(uavs[0].getX() + cos(k[i][0] + 3*(k[i + 1][0] - k[i][0])/4)*dxy, uavs[0].getY() + sin(k[i][0] + 3*(k[i + 1][0] - k[i][0])/4)*dxy);
-				vector<Aim> ai2, ai = aimsForUAV(k[i][0], k[i][1], (k[i + 1][0] + k[i][0])/2, uavs[0].getY() - uavs[0].getX()*tan((k[i + 1][0] + k[i][0])/2), dirs[i]);
-				ai2 = aimsForUAV((k[i + 1][0] + k[i][0])/2, uavs[0].getY() - uavs[0].getX()*tan((k[i + 1][0] + k[i][0])/2), k[i + 1][0], k[i + 1][1], dirs[i]);
-				ai.insert(ai.end(), ai2.begin(), ai2.end());
-				uavs[i].roat(ai);
-				vector<GeoObject> go2, go = goForUAV(k[i][0], k[i][1], (k[i + 1][0] + k[i][0])/2, uavs[0].getY() - uavs[0].getX()*tan((k[i + 1][0] + k[i][0])/2), dirs[i]);
-				go2 = goForUAV((k[i + 1][0] + k[i][0])/2, uavs[0].getY() - uavs[0].getX()*tan((k[i + 1][0] + k[i][0])/2), k[i + 1][0], k[i + 1][1], dirs[i]);
-				go.insert(go.end(), go2.begin(), go2.end());
-				uavs[i].elaborateRoat(go);
-				ai.clear(); ai2.clear();
-				go.clear(); go2.clear();
-			}
-			else
-			{
-				uavs[i].roat(aimsForUAV(k[i][0], k[i][1], k[i + 1][0], k[i + 1][1], dirs[i]));
-				uavs[i].elaborateRoat(goForUAV(k[i][0], k[i][1], k[i + 1][0], k[i + 1][1], dirs[i]));
+				k[i].setK(k[i][0] - pi/180);//подумать, какой будет сдвиг для луча
+				k[i].setB(centre.getY() - centre.getX()*tan(k[i][0]));
+				dirs[i - 1].setX(centre.getX() + cos(k[i - 1][0] + (k[i][0] - k[i - 1][0])/2)*dxy);
+				dirs[i - 1].setY(centre.getY() + sin(k[i - 1][0] + (k[i][0] - k[i - 1][0])/2)*dxy); 
+				slot --;
 			}
 		}
-		if (2*pi + k[0][0] - k[uavs.size() - 1][0] >= pi)
+	}
+	dirs.push_back(Object(centre.getX() + cos((2*pi + k[uavssize - 1][0])/2)*dxy, centre.getY() + sin((2*pi + k[uavssize - 1][0])/2)*dxy));
+	for (int i = 0; i < uavssize - 1; i++)
+	{
+		if (k[i + 1][0] - k[i][0] >= pi)
 		{
-			Object d1(uavs[0].getX() + cos(k[uavs.size() - 1][0] + (2*pi - k[uavs.size() - 1][0])/4)*dxy, uavs[0].getY() + sin(k[uavs.size() - 1][0] + (2*pi - k[uavs.size() - 1][0])/4)*dxy), d2(uavs[0].getX() + cos(k[uavs.size() - 1][0] + 3*(2*pi - k[uavs.size() - 1][0])/4)*dxy, uavs[0].getY() + sin(k[uavs.size() - 1][0] + 3*(2*pi - k[uavs.size() - 1][0])/4)*dxy);
-			vector<Aim> ai2, ai = aimsForUAV(k[uavs.size() - 1][0], k[uavs.size() - 1][1], (2*pi + k[0][0] + k[uavs.size() - 1][0])/2, uavs[0].getY() - uavs[0].getX()*tan((2*pi + k[0][0] + k[uavs.size() - 1][0])/2), d1);
-			ai2 = aimsForUAV((2*pi + k[0][0] + k[uavs.size() - 1][0])/2, uavs[0].getY() - uavs[0].getX()*tan((2*pi + k[0][0] + k[uavs.size() - 1][0])/2), 2*pi + k[0][0], k[0][1], d2);
+			Object d1(centre.getX() + cos(k[i][0] + (k[i + 1][0] - k[i][0])/4)*dxy, centre.getY() + sin(k[i][0] + (k[i + 1][0] - k[i][0])/4)*dxy), d2(centre.getX() + cos(k[i][0] + 3*(k[i + 1][0] - k[i][0])/4)*dxy, centre.getY() + sin(k[i][0] + 3*(k[i + 1][0] - k[i][0])/4)*dxy);
+			vector<Aim> ai2, ai = aimsForUAV(k[i][0], k[i][1], (k[i + 1][0] + k[i][0])/2, centre.getY() - centre.getX()*tan((k[i + 1][0] + k[i][0])/2), dirs[i]);
+			ai2 = aimsForUAV((k[i + 1][0] + k[i][0])/2, centre.getY() - centre.getX()*tan((k[i + 1][0] + k[i][0])/2), k[i + 1][0], k[i + 1][1], dirs[i]);
 			ai.insert(ai.end(), ai2.begin(), ai2.end());
-			uavs[uavs.size() - 1].roat(ai);
-			vector<GeoObject> go2, go = goForUAV(k[uavs.size() - 1][0], k[uavs.size() - 1][1], (2*pi + k[0][0] + k[uavs.size() - 1][0])/2, uavs[0].getY() - uavs[0].getX()*tan((2*pi + k[0][0] + k[uavs.size() - 1][0])/2), d1);
-			go2 = goForUAV((2*pi + k[0][0] + k[uavs.size() - 1][0])/2, uavs[0].getY() - uavs[0].getX()*tan((2*pi + k[0][0] + k[uavs.size() - 1][0])/2), 2*pi + k[0][0], k[0][1], d2);
+			uavs[i].roat(ai);
+			vector<GeoObject> go2, go = goForUAV(k[i][0], k[i][1], (k[i + 1][0] + k[i][0])/2, centre.getY() - centre.getX()*tan((k[i + 1][0] + k[i][0])/2), dirs[i]);
+			go2 = goForUAV((k[i + 1][0] + k[i][0])/2, centre.getY() - centre.getX()*tan((k[i + 1][0] + k[i][0])/2), k[i + 1][0], k[i + 1][1], dirs[i]);
 			go.insert(go.end(), go2.begin(), go2.end());
-			uavs[uavs.size() - 1].elaborateRoat(go);
+			uavs[i].elaborateRoat(go);
+			uavs[i].elaborateRoat(go);
 			ai.clear(); ai2.clear();
 			go.clear(); go2.clear();
 		}
 		else
 		{
-			uavs[uavs.size() - 1].roat(aimsForUAV(k[uavs.size() - 1][0], k[uavs.size() - 1][1], 2*pi + k[0][0], k[0][1], dirs.back()));
-			uavs[uavs.size() - 1].elaborateRoat(goForUAV(k[uavs.size() - 1][0], k[uavs.size() - 1][1], 2*pi + k[0][0], k[0][1], dirs.back()));
+			uavs[i].roat(aimsForUAV(k[i][0], k[i][1], k[i + 1][0], k[i + 1][1], dirs[i]));
+			uavs[i].elaborateRoat(goForUAV(k[i][0], k[i][1], k[i + 1][0], k[i + 1][1], dirs[i]));
+			uavs[i].elaborateRoat(goForUAV(k[i][0], k[i][1], k[i + 1][0], k[i + 1][1], dirs[i]));
 		}
+	}
+	if (2*pi + k[0][0] - k[uavssize - 1][0] >= pi)
+	{
+		Object d1(centre.getX() + cos(k[uavssize - 1][0] + (2*pi - k[uavssize - 1][0])/4)*dxy, centre.getY() + sin(k[uavssize - 1][0] + (2*pi - k[uavssize - 1][0])/4)*dxy), d2(centre.getX() + cos(k[uavssize - 1][0] + 3*(2*pi - k[uavssize - 1][0])/4)*dxy, centre.getY() + sin(k[uavssize - 1][0] + 3*(2*pi - k[uavssize - 1][0])/4)*dxy);
+		vector<Aim> ai2, ai = aimsForUAV(k[uavssize - 1][0], k[uavssize - 1][1], (2*pi + k[0][0] + k[uavssize - 1][0])/2, centre.getY() - centre.getX()*tan((2*pi + k[0][0] + k[uavssize - 1][0])/2), d1);
+		ai2 = aimsForUAV((2*pi + k[0][0] + k[uavssize - 1][0])/2, centre.getY() - centre.getX()*tan((2*pi + k[0][0] + k[uavssize - 1][0])/2), 2*pi + k[0][0], k[0][1], d2);
+		ai.insert(ai.end(), ai2.begin(), ai2.end());
+		uavs[uavssize - 1].roat(ai);
+		vector<GeoObject> go2, go = goForUAV(k[uavssize - 1][0], k[uavssize - 1][1], (2*pi + k[0][0] + k[uavssize - 1][0])/2, centre.getY() - centre.getX()*tan((2*pi + k[0][0] + k[uavssize - 1][0])/2), d1);
+		go2 = goForUAV((2*pi + k[0][0] + k[uavssize - 1][0])/2, centre.getY() - centre.getX()*tan((2*pi + k[0][0] + k[uavssize - 1][0])/2), 2*pi + k[0][0], k[0][1], d2);
+		go.insert(go.end(), go2.begin(), go2.end());
+		uavs[uavssize - 1].elaborateRoat(go);
+		ai.clear(); ai2.clear();
+		go.clear(); go2.clear();
 	}
 	else
 	{
+		uavs[uavssize - 1].roat(aimsForUAV(k[uavssize - 1][0], k[uavssize - 1][1], 2*pi + k[0][0], k[0][1], dirs.back()));
+		uavs[uavssize - 1].elaborateRoat(goForUAV(k[uavssize - 1][0], k[uavssize - 1][1], 2*pi + k[0][0], k[0][1], dirs.back()));
 	}
 };
 bool Map::allUVAtogether()
@@ -179,7 +195,6 @@ int Map::calcAims(float k1, float b1, float k2, float b2, Object dir)
 {
 	int sum = 0;
 	float x13, x23, y13, y23;
-	Object centr((b2 - b1)/(tan(k1) - tan(k2)), tan(k1)*(b2 - b1)/(tan(k1) - tan(k2)) + b1);
 	for (int i = 0; i < aims.size(); i++)
 	{
 		x13 = (aims[i].getY() - aims[i].getX()*(dir.getY() - aims[i].getY())/(dir.getX() - aims[i].getX()) - b1)/(tan(k1) - (dir.getY() - aims[i].getY())/(dir.getX() - aims[i].getX()));
@@ -195,7 +210,6 @@ vector<Aim> Map::aimsForUAV(float k1, float b1, float k2, float b2, Object dir)
 {
 	vector<Aim> sum;
 	float x13, x23, y13, y23, k, b;
-	Object centr((b2 - b1)/(tan(k1) - tan(k2)), tan(k1)*(b2 - b1)/(tan(k1) - tan(k2)) + b1);
 	for (int i = 0; i < aims.size(); i++)
 	{
 		k = (dir.getY() - aims[i].getY())/(dir.getX() - aims[i].getX());

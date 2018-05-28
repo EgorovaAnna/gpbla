@@ -19,6 +19,7 @@ public:
 	int getY();
 	void loadIm(std::ifstream &fin);
 	void paintAll(int color);
+	void paintAll(int a, int b, int c);
 	void drawPoint(int x, int y, int color = 0, int nh = 0);
 	void drawPoint(int x, int y, int color[3], int nh = 0);
 	void drawLine(int x1, int x2, int y1, int y2, int color = 0, int nh = 0);

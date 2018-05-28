@@ -1,5 +1,3 @@
-//#include "GeoObject.h"
-//#include "PVO.h"
 #include "MapImage.h"
 
 int main()
@@ -7,7 +5,7 @@ int main()
 	PVO pvo(4.5, 5.5, 4, 0.7);
 	Map map(10, 100, 40, 90);
 	map.addAim(Aim(25, 44, 0));
-	map.addAim(Aim(13, 50, 0));
+	//map.addAim(Aim(13, 50, 0));
 	map.addAim(Aim(34, 64, 0));
 	map.addAim(Aim(70, 81, 0));
 	map.addAim(Aim(90, 45, 0));
@@ -22,10 +20,10 @@ int main()
 	map.addAim(Aim(69, 42.5, 0));
 	map.addAim(Aim(55, 83, 0));
 	map.addUAV(UAV(50, 50, 0, 0));
-	map.addUAV(UAV(50, 50, 0, 0));
-	map.addUAV(UAV(50, 50, 0, 0));
-	map.addUAV(UAV(50, 50, 0, 0));
-	map.addObject(GeoObject(16, 60, 1.9));
+//	map.addUAV(UAV(50, 50, 0, 0));
+//	map.addUAV(UAV(50, 50, 0, 0));
+//	map.addUAV(UAV(50, 50, 0, 0));
+	/*map.addObject(GeoObject(16, 60, 1.9));
 	map.addObject(GeoObject(84, 80, 1));
 	map.addObject(GeoObject(80, 61, 1.3));
 	map.addObject(GeoObject(45, 86, 1));
@@ -35,10 +33,11 @@ int main()
 	map.addObject(GeoObject(42.7, 68.7, 0.85));
 	map.addObject(GeoObject(80, 46, 1.1));
 	map.addObject(GeoObject(25.5, 71.5, 1.1));
-	map.addObject(GeoObject(55.5, 68, 5.5));
+	map.addObject(GeoObject(55.5, 68, 5.5));*/
 	map.divideTer();
 	MapImage mi(map);
 	mi.loadFile("map.ppm");
+	mi.paintAll(100, 255, 80);
 	vector<UAV> u = map.getUAV();
 	vector<GeoObject> o = map.getO();
 	vector<Object> n, d;
@@ -46,8 +45,10 @@ int main()
 	vector<Aim> a = map.getA();
 	//cout << '\n'; cout << '\n'; cout << '\n';
 	mi.paintAims(a);
+	mi.paintSqare(mi.coordinateToPoint(50, 50).getX(), mi.coordinateToPoint(50, 50).getY(), 15);
+	mi.print("forcomm1.ppm");
 	//mi.print("mapAims.pnm");
-	mi.paintObjects(o);
+	//mi.paintObjects(o);
 	//mi.print("mapObjects.pnm");
 	float x, y;
 	for (int i = 0; i < k.size(); i++)
@@ -82,17 +83,9 @@ int main()
 	//mi.print("mapDivision.pnm");
 	for (int i = 0; i < u.size(); i++)
 		mi.paintLine(n = u[i].getRoat());
-	//mi.print("mapRoats.pnm");
-	try
+	mi.print("forcomm2.pnm");
+	/*try
 	{
-		/*mi.paintSpline(n = u[0].getRoat());
-		mi.print("mapSplines.pnm");
-		mi.paintSpline(n = u[1].getRoat());
-		mi.print("mapSplines.pnm");
-		mi.paintSpline(n = u[2].getRoat());
-		mi.print("mapSplines.pnm");
-		mi.paintSpline(n = u[2].getRoat());
-		mi.print("mapSplines.pnm");*/
 		for (int i = 0; i < u.size(); i++)
 		{
 			mi.paintSpline(n = u[i].getRoat());
@@ -103,7 +96,7 @@ int main()
 	{
 		cout << a.msg << '\n';
 	}
-	mi.print("mapSplines.pnm");
+	mi.print("mapSplines.pnm");*/
 	//for (int i = 0; i < o.size(); i++)
 	//cout << "point1" << '\n';
 	//for (int i = 0; i < o.size(); i++)
