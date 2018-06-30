@@ -9,7 +9,7 @@ int main()
 	map.addAim(Aim(25, 44, 0));
 	map.addAim(Aim(13, 50, 0));
 	map.addAim(Aim(34, 64, 0));
-	map.addAim(Aim(70, 81, 0));
+	map.addAim(Aim(70, 83, 0));
 	map.addAim(Aim(90, 45, 0));
 	map.addAim(Aim(90, 65, 0));
 	map.addAim(Aim(40, 88, 0));
@@ -26,7 +26,7 @@ int main()
 	map.addUAV(UAV(50, 50, 0, 0));
 	map.addUAV(UAV(50, 50, 0, 0));
 	map.addObject(GeoObject(16, 60, 1.9));
-	map.addObject(GeoObject(84, 80, 1));
+	map.addObject(GeoObject(84, 80.5, 1.4));
 	map.addObject(GeoObject(80, 61, 1.3));
 	map.addObject(GeoObject(45, 86, 1));
 	map.addObject(GeoObject(30, 45, 1.2));
@@ -80,8 +80,8 @@ int main()
 	}
 	//mi.paintLine(d, 0);
 	//mi.print("mapDivision.pnm");
-	for (int i = 0; i < u.size(); i++)
-		mi.paintLine(n = u[i].getRoat());
+	//for (int i = 0; i < u.size(); i++)
+	//	mi.paintLine(n = u[i].getRoat());
 	//mi.print("mapRoats.pnm");
 	try
 	{
@@ -96,13 +96,14 @@ int main()
 		for (int i = 0; i < u.size(); i++)
 		{
 			mi.paintSpline(n = u[i].getRoat());
-			mi.print("mapSplines.pnm");
+			//mi.print("mapSplines.pnm");
 		}
 	}
 	catch(alglib::ap_error a)
 	{
 		cout << a.msg << '\n';
 	}
+	mi.paintAims(a);
 	mi.print("mapSplines.pnm");
 	//for (int i = 0; i < o.size(); i++)
 	//cout << "point1" << '\n';

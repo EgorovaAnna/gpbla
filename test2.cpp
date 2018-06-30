@@ -4,21 +4,23 @@ int main()
 {
 	PVO pvo(4.5, 5.5, 4, 0.7);
 	Map map(10, 100, 40, 90);
-	map.addAim(Aim(25, 44, 0));
+	map.addAim(Aim(22, 75, 0));
+	//map.addAim(Aim(25, 44, 0));
 	//map.addAim(Aim(13, 50, 0));
 	map.addAim(Aim(34, 64, 0));
-	map.addAim(Aim(70, 81, 0));
-	map.addAim(Aim(90, 45, 0));
-	map.addAim(Aim(90, 65, 0));
-	map.addAim(Aim(40, 88, 0));
-	map.addAim(Aim(22, 75, 0));
-	map.addAim(Aim(70, 57, 0));
 	map.addAim(Aim(37, 82, 0));
-	map.addAim(Aim(95, 79, 0));
-	map.addAim(Aim(53, 44, 0));
-	map.addAim(Aim(59, 43, 0));
-	map.addAim(Aim(69, 42.5, 0));
+	map.addAim(Aim(40, 88, 0));
+	//map.addAim(Aim(53, 44, 0));
 	map.addAim(Aim(55, 83, 0));
+	//map.addAim(Aim(59, 43, 0));
+	//map.addAim(Aim(69, 42.5, 0));
+	//map.addAim(Aim(70, 57, 0));
+	//map.addAim(Aim(71, 81, 0));
+	//map.addAim(Aim(90, 45, 0));
+	map.addAim(Aim(90, 65, 0));
+	map.addAim(Aim(95, 79, 0));
+	
+	
 	map.addUAV(UAV(50, 50, 0, 0));
 //	map.addUAV(UAV(50, 50, 0, 0));
 //	map.addUAV(UAV(50, 50, 0, 0));
@@ -45,8 +47,8 @@ int main()
 	vector<Aim> a = map.getA();
 	//cout << '\n'; cout << '\n'; cout << '\n';
 	mi.paintAims(a);
-	mi.paintSqare(mi.coordinateToPoint(50, 50).getX(), mi.coordinateToPoint(50, 50).getY(), 15);
-	mi.print("forcomm1.ppm");
+	//mi.paintSqare(mi.coordinateToPoint(50, 50).getX(), mi.coordinateToPoint(50, 50).getY(), 15);
+	mi.print("forspline1.ppm");
 	//mi.print("mapAims.pnm");
 	//mi.paintObjects(o);
 	//mi.print("mapObjects.pnm");
@@ -81,9 +83,14 @@ int main()
 	}
 	//mi.paintLine(d, 0);
 	//mi.print("mapDivision.pnm");
-	for (int i = 0; i < u.size(); i++)
-		mi.paintLine(n = u[i].getRoat());
-	mi.print("forcomm2.pnm");
+	//for (int i = 0; i < u.size(); i++)
+	//	mi.paintLine(n = u[i].getRoat());
+	n.clear();
+	for (int i = 0; i < a.size(); i++)
+		n.push_back(Object(a[i].getX(), a[i].getY()));
+	n.push_back(Object(a.back().getX(), a.back().getY()));
+	mi.paintSpline(n, 0, false);
+	mi.print("forspline2.pnm");
 	/*try
 	{
 		for (int i = 0; i < u.size(); i++)

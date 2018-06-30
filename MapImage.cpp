@@ -70,25 +70,47 @@ void MapImage::paintObjects(vector<GeoObject> objects, int color)
 				if (points[i].distanceXY(j, k) <= rad[i])
 					image -> drawPoint(j, k, color);
 }
-void MapImage::paintSpline(vector<Object> objects, int color)
+void MapImage::paintSpline(vector<Object> objects, int color, bool cap)
 {
 	alglib::spline1dinterpolant s1, s2;
-	int minxy = image -> getX(), maxxy = 0, imin, imax, signal = 0, i, j, k, l;
+	int minxy = image -> getX(), maxxy = 0, imin, imax, signal = 0, i, j = -1, k, l, bufx, bufy;
+	float countkb[3];
 	vector<Object> points;
 	alglib::real_1d_array x1, x2, y1, y2;
 	double *dx1, *dx2, *dy1, *dy2;
 	for (i = 0; i < objects.size() - 1; i++)
 	{
+		j++;
 		points.push_back(coordinateToPoint(objects[i]));
-		if(points[i].getX() < minxy)
+		if(points[j].getX() < minxy)
 		{
-			minxy = points[i].getX();
-			imin = i;
+			minxy = points[j].getX();
+			imin = j;
 		}
-		if(points[i].getX() > maxxy)
+		if(points[j].getX() > maxxy)
 		{
-			maxxy = points[i].getX();
-			imax = i;
+			maxxy = points[j].getX();
+			imax = j;
+		}
+		if (cap)
+		{
+			k = coordinateToPoint(objects[i + 1]).getX();
+			l = coordinateToPoint(objects[i + 1]).getY();
+			countkb[0] = min(abs(points[j].getX() - k)/5.0, (image -> getX())/200.0);
+			countkb[1] = (l - points[j].getY())/(k - points[j].getX());
+			countkb[2] = - points[j].getX()*countkb[1] + points[j].getY();
+			while (points[j].distanceXY((float)k, (float)l) > 2*countkb[0])
+			{
+				cout << points[j].getX() << "__" << points[j].getY() << '\n';
+				bufx = points[j].getX() + countkb[0]; bufy = countkb[1]*bufx + countkb[2];
+				if((l - bufy)*(bufy - points[j].getY()) > 0 && (k - bufx)*(bufx - points[j].getX()) > 0)
+				{
+					j++;
+					points.push_back(Object(bufx, bufy));
+				}
+				else
+					break;
+			}
 		}
 	}
 	for (i = min(imin, imax) + 1; i < max(imin, imax); i++)
@@ -158,7 +180,8 @@ void MapImage::paintSpline(vector<Object> objects, int color)
 		for (i = minxy; i < maxxy; i++)
 		{
 			paintPointX(i, (int)spline1dcalc(s1, i), color);
-			paintPointX(i, (int)spline1dcalc(s2, i), color);
+			if (cap)
+				paintPointX(i, (int)spline1dcalc(s2, i), color);
 		}
 	}
 	else
@@ -231,16 +254,24 @@ void MapImage::paintAims(vector<Aim> aims)
 void MapImage::paintPointX(int x, int y, int color)
 {
 	//int rad = 3, color3[3] = {((color == 0) ? 255 : color), 0, 0};
-	int rad = 3, color3[3] = {0, 255, 0};
+	int rad = 3, color3[3] = {0, 0, 0};
 	for (int k = max(y - rad, 0); k <= min(y + rad, image -> getY()); k++)
 		image -> drawPoint(x, k, color3);
+	for (int k = max(y - rad, 0); k <= min(y + rad, image -> getY()); k++)
+		image -> drawPoint(x + 1, k, color3);
+	for (int k = max(y - rad, 0); k <= min(y + rad, image -> getY()); k++)
+		image -> drawPoint(x - 1, k, color3);
 }
 void MapImage::paintPointY(int x, int y, int color)
 {
 	//int rad = 3, color3[3] = {((color == 0) ? 255 : color), 0, 0};
-	int rad = 3, color3[3] = {0, 255, 0};
+	int rad = 3, color3[3] = {0, 0, 0};
 	for (int k = max(x - rad, 0); k <= min(x + rad, image -> getX()); k++)
 		image -> drawPoint(k, y, color3);
+	for (int k = max(x - rad, 0); k <= min(x + rad, image -> getX()); k++)
+		image -> drawPoint(k, y + 1, color3);
+	for (int k = max(x - rad, 0); k <= min(x + rad, image -> getX()); k++)
+		image -> drawPoint(k, y - 1, color3);
 }
 void MapImage::paintSqare(int x, int y, int size, int color)
 {
