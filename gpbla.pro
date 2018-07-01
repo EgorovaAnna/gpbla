@@ -25,10 +25,13 @@ DEFINES += QT_DEPRECATED_WARNINGS
 
 SOURCES += \
         main.cpp \
-        mainwindow.cpp
+        mainwindow.cpp \
+    addmap.cpp
 
 HEADERS += \
-        mainwindow.h
+        mainwindow.h \
+    addmap.h
 
 FORMS += \
-        mainwindow.ui
+        mainwindow.ui \
+    addmap.ui
