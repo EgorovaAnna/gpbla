@@ -44,6 +44,7 @@ private:
     //QPixmap map;
     QImage mapImage;
     Map *map;
+    MapImage *mapim;
 private:
     void addMap();
     void addBLA();

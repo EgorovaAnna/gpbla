@@ -36,13 +36,14 @@ void MainWindow::addMap()
     //scene -> setSceneRect(map.rect());
     //ui -> mapImage -> setScene(scene);
     //ui -> mapImage -> show();
-    ui -> label -> setPixmap(QPixmap::fromImage(mapImage.scaled(ui -> label -> width(), ui -> label -> height())));
-    //ui ->pushButton_2-> setText();
+    ui -> label -> setPixmap(QPixmap::fromImage(mapImage.scaledToWidth(ui -> label -> width())));
     ui -> label -> show();
     ui -> pushButton -> setEnabled(true);
     ui -> pushButton_2 -> setEnabled(true);
     ui -> pushButton_3 -> setEnabled(true);
     map = new Map(addmap -> latlon[0][0].toFloat(), addmap -> latlon[1][0].toFloat(), addmap -> latlon[0][3].toFloat(), addmap -> latlon[1][3].toFloat());
+    mapim = new MapImage(*map);
+    mapim -> setImage(mapImage.width(), mapImage.height());
     this -> show();
 }
 
@@ -67,7 +68,13 @@ void MainWindow::addAim()
 {
     //добавление цели
     Aim aim(addaim -> coord[0].toFloat(), addaim -> coord[1].toFloat(), addaim -> coord[2].toFloat());
+    Object aimOnImage = mapim -> coordinateToPoint(aim.getX(), aim.getY());
     map -> addAim(aim);
+    for (int i = max (0, (int)aimOnImage.getX() - mapImage.height()/50); i < min(mapImage.width(), (int)aimOnImage.getX() + mapImage.height()/50); i++)
+        for (int j = max (0, (int)aimOnImage.getY() - mapImage.height()/50); j < min(mapImage.height(), (int)aimOnImage.getY() + mapImage.height()/50); j++)
+            mapImage.setPixelColor(i, j, QColor("black"));
+    ui -> label -> setPixmap(QPixmap::fromImage(mapImage.scaledToWidth(ui -> label -> width())));
+    //QPainter painter(ui -> label)
     if (!(map -> getUAV()).empty())
     {
         ui -> pushButton_5 -> setEnabled(true);
@@ -114,6 +121,12 @@ void MainWindow::on_pushButton_3_clicked()
 void MainWindow::on_pushButton_5_clicked()
 {
     //рассчет траекторий
+    map -> divideTer();
+    vector<UAV> uav = map -> getUAV();
+    for (int i = 0; i < uav.size(); i++)
+        mapim -> paintLine(uav[i].getRoat(), mapImage, QColor("red"));
+    ui -> label -> setPixmap(QPixmap::fromImage(mapImage.scaledToWidth(ui -> label -> width())));
+
 }
 
 void MainWindow::on_pushButton_6_clicked()

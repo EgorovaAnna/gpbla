@@ -19,6 +19,11 @@ void MapImage::loadFile(string file)
 	image = new Image(tsize);
 	image -> loadIm(fin);
 }
+void MapImage::setImage(int x, int y)
+{
+	int tsize[2] = {x, y};
+	image = new Image(tsize);
+}
 Object MapImage::coordinateToPoint(Object a, int color)
 {
 	return Object((int)(a.getX() - (*map)[0])*(image -> getX())/((*map)[1] - (*map)[0]), (int)(a.getY() - (*map)[2])*(image -> getY())/((*map)[3] - (*map)[2]), color);
@@ -52,6 +57,75 @@ void MapImage::paintLine(vector<Object> objects, int color)
 				image -> drawLine(x1 -j, y1, x2 - j, y2, color);
 			else
 				image -> drawLine(x1 + 5 - j, y1, x2 + 5 - j, y2, color);
+		}
+	}
+}
+void MapImage::paintLine(vector<Object> objects, QImage &im, QColor color)
+{
+	vector<Object> points;
+	int x1, x2, y1, y2;
+	for (int i = 0; i < objects.size(); i++)
+		points.push_back(coordinateToPoint(objects[i]));
+	for (int i = 0; i < objects.size() - 1; i++)
+	{
+		x1 = points[i].getX();
+		y1 = points[i].getY();
+		x2 = points[i + 1].getX();
+		y2 = points[i + 1].getY();
+		drawLine(x1, y1, x2, y2, im, color);
+		drawLine(x1 - (x1 == 0 ? 0 : 1), y1, x2 - (x2 == 0 ? 0 : 1), y2, im, color);
+		drawLine(x1, y1 + (y1 == image -> getY() ? 0 : 1), x2, y2 + (y2 == image -> getY() ? 0 : 1), im, color);
+		for (int j = -1; j > -5; j--)
+		{
+			if (y1 - j >= 0 && y2 - j >= 0)
+				drawLine(x1, y1 - j, x2, y2 - j, im, color);
+			else
+				drawLine(x1, y1 + 5 - j, x2, y2 + 5 - j, im, color);
+			if (x1 - j >= 0 && x2 - j >= 0)
+				drawLine(x1 -j, y1, x2 - j, y2, im, color);
+			else
+				drawLine(x1 + 5 - j, y1, x2 + 5 - j, y2, im, color);
+		}
+	}
+}
+void MapImage::drawLine(int x1, int y1, int x2, int y2, QImage &im, QColor color)
+{
+	const int deltaX = abs(x2 - x1);
+	const int deltaY = abs(y2 - y1);
+	const int signX = x1 < x2 ? 1 : -1;
+	const int signY = y1 < y2 ? 1 : -1;
+	int error = deltaX - deltaY;
+	int i;
+	if (x1 == x2||y1 == y2)
+	{
+		if (x1 == x2)
+		{
+			for (i = y1; i!= y2; i = i + signY)
+				im.setPixelColor(x1, i, color);
+		}
+		if(y1 == y2)
+		{
+			for (i = x1; i!= x2; i = i + signX)
+				im.setPixelColor(i, y1, color);
+		}
+	}
+	else
+	{
+		im.setPixelColor(x2, y2, color);	
+		while(x1 != x2 || y1 != y2)
+		{
+			im.setPixelColor(x1, y1, color);
+			int error2 = error*2;
+			if (error2 > -deltaY)
+			{
+				error -= deltaY;
+				x1 += signX;
+			}
+			if (error2 < deltaX)
+			{
+				error += deltaX;
+				y1 += signY;
+			}
 		}
 	}
 }
