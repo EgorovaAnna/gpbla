@@ -70,7 +70,7 @@ void MapImage::paintObjects(vector<GeoObject> objects, int color)
 				if (points[i].distanceXY(j, k) <= rad[i])
 					image -> drawPoint(j, k, color);
 }
-void MapImage::paintSpline(vector<Object> objects, int color, bool cap)
+/*void MapImage::paintSpline(vector<Object> objects, int color, bool cap)
 {
 	alglib::spline1dinterpolant s1, s2;
 	int minxy = image -> getX(), maxxy = 0, imin, imax, signal = 0, i, j = -1, k, l, bufx, bufy;
@@ -238,7 +238,7 @@ void MapImage::paintSpline(vector<Object> objects, int color, bool cap)
 			paintPointX((int)spline1dcalc(s2, i), i, color);
 		}
 	}
-}
+}*/
 void MapImage::paintAims(vector<Aim> aims)
 {
 	vector<Object> points;

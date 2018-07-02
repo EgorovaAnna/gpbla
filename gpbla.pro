@@ -26,12 +26,41 @@ DEFINES += QT_DEPRECATED_WARNINGS
 SOURCES += \
         main.cpp \
         mainwindow.cpp \
-    addmap.cpp
+    addmap.cpp \
+    addbla.cpp \
+    addaim.cpp \
+    addobject.cpp \
+    UAV.cpp \
+    PVO.cpp \
+    Point.cpp \
+    Object.cpp \
+    MapImage.cpp \
+    Map.cpp \
+    Image.cpp \
+    GeoObject.cpp \
+    ChangeHeight.cpp \
+    Aim.cpp
 
 HEADERS += \
         mainwindow.h \
-    addmap.h
+    addmap.h \
+    addbla.h \
+    addaim.h \
+    addobject.h \
+    UAV.h \
+    PVO.h \
+    Point.h \
+    Object.h \
+    MapImage.h \
+    Map.h \
+    Image.h \
+    GeoObject.h \
+    ChangeHeight.h \
+    Aim.h
 
 FORMS += \
         mainwindow.ui \
-    addmap.ui
+    addmap.ui \
+    addbla.ui \
+    addaim.ui \
+    addobject.ui

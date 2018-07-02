@@ -4,6 +4,10 @@
 #include <QMainWindow>
 #include <QGraphicsScene>
 #include "addmap.h"
+#include "addbla.h"
+#include "addaim.h"
+#include "addobject.h"
+#include "MapImage.h"
 
 namespace Ui {
 class MainWindow;
@@ -33,11 +37,18 @@ private slots:
 private:
     Ui::MainWindow *ui;
     AddMap *addmap;
+    AddBLA *addbla;
+    AddAim *addaim;
+    AddObject *addobj;
     //QGraphicsScene *scene;
     //QPixmap map;
-    QImage map;
+    QImage mapImage;
+    Map *map;
 private:
     void addMap();
+    void addBLA();
+    void addAim();
+    void addObj();
 };
 
 #endif // MAINWINDOW_H

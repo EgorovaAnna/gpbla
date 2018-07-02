@@ -20,6 +20,46 @@ void UAV::iteration(float dt)
 {
 	
 }; 
+void UAV::setR(float rad)
+{
+	radioview = rad;
+};
+void UAV::setF(float f)
+{
+	focus = f;
+};
+void UAV::setW(float w)
+{
+	way = w;
+};
+void UAV::setH(float h)
+{
+	maxH = h;
+};
+void UAV::setV(float v)
+{
+	velocity = v;
+};
+float UAV::getR()
+{
+	return radioview;
+};
+float UAV::getF()
+{
+	return focus;
+};
+float UAV::getW()
+{
+	return way;
+};
+float UAV::getH()
+{
+	return maxH;
+};
+float UAV::getV()
+{
+	return velocity;
+};
 void UAV::deleteAim(Aim aim)
 {
 	for(auto i = aims.begin(); i < aims.end(); i++)
