@@ -249,8 +249,8 @@ p, li { white-space: pre-wrap; }
   <widget class="QPushButton" name="pushButton">
    <property name="geometry">
     <rect>
-     <x>748</x>
-     <y>494</y>
+     <x>750</x>
+     <y>500</y>
      <width>111</width>
      <height>31</height>
     </rect>
@@ -284,6 +284,19 @@ p, li { white-space: pre-wrap; }
      <width>113</width>
      <height>25</height>
     </rect>
+   </property>
+  </widget>
+  <widget class="QPushButton" name="pushButton_2">
+   <property name="geometry">
+    <rect>
+     <x>620</x>
+     <y>500</y>
+     <width>111</width>
+     <height>31</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>Отмена</string>
    </property>
   </widget>
  </widget>

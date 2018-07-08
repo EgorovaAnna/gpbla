@@ -144,6 +144,21 @@ void MapImage::paintObjects(vector<GeoObject> objects, int color)
 				if (points[i].distanceXY(j, k) <= rad[i])
 					image -> drawPoint(j, k, color);
 }
+void MapImage::paintObjects(vector<GeoObject> objects, QImage &im, QColor color)
+{
+	vector<Object> points;
+	vector<int> rad;
+	for (int i = 0; i < objects.size(); i++)
+	{
+		points.push_back(coordinateToPoint(objects[i]));
+		rad.push_back((int)(objects[i].getRadius()*(image -> getX())/((*map)[1] - (*map)[0])));
+	}
+	for (int i = 0; i < objects.size(); i++)
+		for (int j = max((int)points[i].getX() - rad[i], 0); j <= min((int)points[i].getX() + rad[i], image -> getX()); j++)
+			for (int k = max((int)points[i].getY() - rad[i], 0); k <= min((int)points[i].getY() + rad[i], image -> getY()); k++)
+				if (points[i].distanceXY(j, k) <= rad[i])
+					im.setPixelColor(j, k, color);
+}
 /*void MapImage::paintSpline(vector<Object> objects, int color, bool cap)
 {
 	alglib::spline1dinterpolant s1, s2;
@@ -313,6 +328,18 @@ void MapImage::paintObjects(vector<GeoObject> objects, int color)
 		}
 	}
 }*/
+void MapImage::paintAims(vector<Aim> aims, QImage &im, QColor color)
+{
+	vector<Object> points;
+    int rad = 20;
+	for (int i = 0; i < aims.size(); i++)
+		points.push_back(coordinateToPoint(aims[i]));
+	for (int i = 0; i < aims.size(); i++)
+		for (int j = max((int)points[i].getX() - rad, 0); j <= min((int)points[i].getX() + rad, image -> getX()); j++)
+			for (int k = max((int)points[i].getY() - rad, 0); k <= min((int)points[i].getY() + rad, image -> getY()); k++)
+				if (points[i].distanceXY(j, k) <= rad)
+					im.setPixelColor(j, k, color);
+}
 void MapImage::paintAims(vector<Aim> aims)
 {
 	vector<Object> points;

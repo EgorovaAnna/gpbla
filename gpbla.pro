@@ -5,6 +5,7 @@
 #-------------------------------------------------
 
 QT       += core gui
+QT       += location
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
@@ -39,7 +40,8 @@ SOURCES += \
     Image.cpp \
     GeoObject.cpp \
     ChangeHeight.cpp \
-    Aim.cpp
+    Aim.cpp \
+    warningadding.cpp
 
 HEADERS += \
         mainwindow.h \
@@ -56,11 +58,14 @@ HEADERS += \
     Image.h \
     GeoObject.h \
     ChangeHeight.h \
-    Aim.h
+    Aim.h \
+    warningadding.h
 
 FORMS += \
         mainwindow.ui \
     addmap.ui \
     addbla.ui \
     addaim.ui \
-    addobject.ui
+    addobject.ui \
+    warningadding.ui \
+    warningadding.ui

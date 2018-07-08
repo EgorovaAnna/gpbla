@@ -6,6 +6,8 @@ AddMap::AddMap(QWidget *parent) :
     ui(new Ui::AddMap)
 {
     ui->setupUi(this);
+    warning = new WarningAdding(this);
+    connect(warning, &WarningAdding::ok, this, &AddMap::warningClose);
 }
 
 AddMap::~AddMap()
@@ -24,6 +26,25 @@ void AddMap::on_pushButton_clicked()
     latlon[1][2] = ui -> lon01 -> text();
     latlon[0][3] = ui -> lat11 -> text();
     latlon[1][3] = ui -> lon11 -> text();
+    if (!path.isEmpty() && !latlon[0][0].isEmpty() && !latlon[1][0].isEmpty() && !latlon[0][3].isEmpty() && !latlon[1][3].isEmpty())
+    {
+        this -> close();
+        emit add();
+    }
+    else
+    {
+        this -> close();
+        warning -> show();
+    }
+}
+
+void AddMap::on_pushButton_2_clicked()
+{
     this -> close();
-    emit add();
+    emit cancelAdding();
+}
+
+void AddMap::warningClose()
+{
+    this -> show();
 }

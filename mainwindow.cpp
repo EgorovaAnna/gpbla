@@ -19,6 +19,10 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(addbla, &AddBLA::add, this, &MainWindow::addBLA);
     connect(addaim, &AddAim::add, this, &MainWindow::addAim);
     connect(addobj, &AddObject::add, this, &MainWindow::addObj);
+    connect(addmap, &AddMap::cancelAdding, this, &MainWindow::show);
+    connect(addbla, &AddBLA::cancelAdding, this, &MainWindow::show);
+    connect(addaim, &AddAim::cancelAdding, this, &MainWindow::show);
+    connect(addobj, &AddObject::cancelAdding, this, &MainWindow::show);
 }
 
 MainWindow::~MainWindow()
@@ -70,16 +74,18 @@ void MainWindow::addAim()
     Aim aim(addaim -> coord[0].toFloat(), addaim -> coord[1].toFloat(), addaim -> coord[2].toFloat());
     Object aimOnImage = mapim -> coordinateToPoint(aim.getX(), aim.getY());
     map -> addAim(aim);
-    for (int i = max (0, (int)aimOnImage.getX() - mapImage.height()/50); i < min(mapImage.width(), (int)aimOnImage.getX() + mapImage.height()/50); i++)
+    /*for (int i = max (0, (int)aimOnImage.getX() - mapImage.height()/50); i < min(mapImage.width(), (int)aimOnImage.getX() + mapImage.height()/50); i++)
         for (int j = max (0, (int)aimOnImage.getY() - mapImage.height()/50); j < min(mapImage.height(), (int)aimOnImage.getY() + mapImage.height()/50); j++)
             mapImage.setPixelColor(i, j, QColor("black"));
-    ui -> label -> setPixmap(QPixmap::fromImage(mapImage.scaledToWidth(ui -> label -> width())));
+    ui -> label -> setPixmap(QPixmap::fromImage(mapImage.scaledToWidth(ui -> label -> width())));/home/anna/prog/gpbla/map*/
     //QPainter painter(ui -> label)
+    mapim -> paintAims(map -> getA(), mapImage);
     if (!(map -> getUAV()).empty())
     {
         ui -> pushButton_5 -> setEnabled(true);
         ui -> pushButton_6 -> setEnabled(true);
     }
+    ui -> label -> setPixmap(QPixmap::fromImage(mapImage.scaledToWidth(ui -> label -> width())));
     this -> show();
 }
 
@@ -88,6 +94,8 @@ void MainWindow::addObj()
     //добавление препятствия
     GeoObject obj(addobj -> coord[0].toFloat(), addobj -> coord[1].toFloat(), addobj -> rad.toFloat());
     map -> addObject(obj);
+    mapim -> paintObjects(map -> getO(), mapImage);
+    ui -> label -> setPixmap(QPixmap::fromImage(mapImage.scaledToWidth(ui -> label -> width())));
     this -> show();
 }
 
@@ -126,7 +134,6 @@ void MainWindow::on_pushButton_5_clicked()
     for (int i = 0; i < uav.size(); i++)
         mapim -> paintLine(uav[i].getRoat(), mapImage, QColor("red"));
     ui -> label -> setPixmap(QPixmap::fromImage(mapImage.scaledToWidth(ui -> label -> width())));
-
 }
 
 void MainWindow::on_pushButton_6_clicked()

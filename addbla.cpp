@@ -6,6 +6,8 @@ AddBLA::AddBLA(QWidget *parent) :
     ui(new Ui::AddBLA)
 {
     ui->setupUi(this);
+    warning = new WarningAdding(this);
+    connect(warning, &WarningAdding::ok, this, &AddBLA::warningClose);
 }
 
 AddBLA::~AddBLA()
@@ -22,6 +24,25 @@ void AddBLA::on_pushButton_clicked()
     focus = ui -> focus -> text();
     maxH = ui -> maxH -> text();
     v = ui -> v -> text();
+    if (!coord[0].isEmpty() && !coord[1].isEmpty() && !coord[2].isEmpty())
+    {
+        this -> close();
+        emit add();
+    }
+    else
+    {
+        this -> close();
+        warning -> show();
+    }
+}
+
+void AddBLA::on_pushButton_2_clicked()
+{
     this -> close();
-    emit add();
+    emit cancelAdding();
+}
+
+void AddBLA::warningClose()
+{
+    this -> show();
 }

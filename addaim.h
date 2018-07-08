@@ -2,6 +2,7 @@
 #define ADDAIM_H
 
 #include <QDialog>
+#include "warningadding.h"
 
 namespace Ui {
 class AddAim;
@@ -17,15 +18,21 @@ public:
 
 private slots:
     void on_pushButton_clicked();
+    void on_pushButton_2_clicked();
 
 public:
     QString coord[3];
 
 signals:
     void add();
+    void cancelAdding();
 
 private:
     Ui::AddAim *ui;
+    WarningAdding *warning;
+
+private:
+    void warningClose();
 };
 
 #endif // ADDAIM_H

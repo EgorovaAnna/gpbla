@@ -15,14 +15,16 @@ public:
 	Object coordinateToPoint(Object a, int color = 0);
 	Object coordinateToPoint(float x, float y, int color = 0);
 	void paintLine(vector<Object> objects, int color = 0);
-	void paintLine(vector<Object> objects, QImage &im, QColor color);
+	void paintLine(vector<Object> objects, QImage &im, QColor color = QColor("red"));
 	void drawLine(int x1, int y1, int x2, int y2, QImage &im, QColor color);
 	void paintObjects(vector<GeoObject> objects, int color = 0);
+	void paintObjects(vector<GeoObject> objects, QImage &im, QColor color = QColor("black"));
 	void paintSpline(vector<Object> objects, int color = 0, bool cap = true);
 	void paintPointX(int x, int y, int color);
 	void paintPointY(int x, int y, int color);
 	void paintSqare(int x, int y, int size = 5, int color = 0);
 	void paintAims(vector<Aim> aims);
+	void paintAims(vector<Aim> aims, QImage &im, QColor color = QColor("red"));
 	void print(string file);
 	void paintAll(int a, int b, int c);
 };

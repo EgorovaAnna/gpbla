@@ -2,6 +2,7 @@
 #define ADDBLA_H
 
 #include <QDialog>
+#include "warningadding.h"
 
 namespace Ui {
 class AddBLA;
@@ -17,9 +18,11 @@ public:
 
 private slots:
     void on_pushButton_clicked();
+    void on_pushButton_2_clicked();
 
 signals:
     void add();
+    void cancelAdding();
 
 public:
     QString coord[3];
@@ -30,6 +33,10 @@ public:
 
 private:
     Ui::AddBLA *ui;
+    WarningAdding *warning;
+
+private:
+    void warningClose();
 };
 
 #endif // ADDBLA_H
