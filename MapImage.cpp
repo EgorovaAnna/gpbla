@@ -146,14 +146,25 @@ void MapImage::paintObjects(vector<GeoObject> objects, int color)
 }
 void MapImage::paintObjects(vector<GeoObject> objects, QImage &im, QColor color)
 {
-	vector<Object> points;
+    vector<Object> points, obj4;
 	vector<int> rad;
 	for (int i = 0; i < objects.size(); i++)
 	{
-		points.push_back(coordinateToPoint(objects[i]));
-		rad.push_back((int)(objects[i].getRadius()*(image -> getX())/((*map)[1] - (*map)[0])));
+        if (objects[i].isRound())
+        {
+            points.push_back(coordinateToPoint(objects[i]));
+            rad.push_back((int)(objects[i].getRadius()*(image -> getX())/((*map)[1] - (*map)[0])));
+        }
+        else
+        {
+            for (int j = 0; j < 4; j++)
+                obj4.push_back((objects[i].getAngles(j)));
+            obj4.push_back(objects[i].getAngles(0));
+            paintLine(obj4, im, color);
+            obj4.clear();
+        }
 	}
-	for (int i = 0; i < objects.size(); i++)
+    for (int i = 0; i < points.size(); i++)
 		for (int j = max((int)points[i].getX() - rad[i], 0); j <= min((int)points[i].getX() + rad[i], image -> getX()); j++)
 			for (int k = max((int)points[i].getY() - rad[i], 0); k <= min((int)points[i].getY() + rad[i], image -> getY()); k++)
 				if (points[i].distanceXY(j, k) <= rad[i])

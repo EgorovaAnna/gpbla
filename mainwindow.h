@@ -2,7 +2,6 @@
 #define MAINWINDOW_H
 
 #include <QMainWindow>
-#include <QGraphicsScene>
 #include <QGeoRoute>
 #include "addmap.h"
 #include "addbla.h"

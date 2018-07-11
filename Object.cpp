@@ -6,6 +6,10 @@ Object::Object(float nx, float ny, bool npvo)
 	y = ny;
 	pvo = npvo;
 }
+Object::Object(bool npvo)
+{
+    pvo = npvo;
+};
 bool Object::isPVO()
 {
 	return pvo;

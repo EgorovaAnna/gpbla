@@ -17,6 +17,7 @@ protected:
 	float x, y; 
 	bool pvo;
 public:
+    Object(bool npvo = false);
 	Object(float nx, float ny, bool npvo = false);
 	bool isPVO(); 
 	float getX();

@@ -2,6 +2,7 @@
 #define ADDMAP_H
 
 #include <QDialog>
+#include <QFileDialog>
 #include "warningadding.h"
 
 namespace Ui {
@@ -24,6 +25,8 @@ signals:
 private slots:
     void on_pushButton_clicked();
     void on_pushButton_2_clicked();
+
+    void on_toolButton_clicked();
 
 private:
     Ui::AddMap *ui;

@@ -20,8 +20,11 @@ private slots:
     void on_pushButton_clicked();
     void on_pushButton_2_clicked();
 
+    void on_type_currentIndexChanged(const QString &arg1);
+
 public:
-    QString coord[2];
+    int type = 0;
+    QString coord[2], coord2[6];
     QString rad;
 
 signals:

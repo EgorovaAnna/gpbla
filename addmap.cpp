@@ -48,3 +48,12 @@ void AddMap::warningClose()
 {
     this -> show();
 }
+
+void AddMap::on_toolButton_clicked()
+{
+    //QFileDialog dialog(this);
+    //dialog.setFileMode(QFileDialog::AnyFile);
+    //dialog.setNameFilter(tr("Images (*.png *.xpm *.jpg)"));
+    path = QFileDialog::getOpenFileName(this, tr("Open Image"), "/home/jana", tr("Image Files (*.png *.jpg *.bmp *.ppm *pnm)"));
+    ui -> pathLine ->setText(path);
+}

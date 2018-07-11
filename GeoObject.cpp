@@ -3,6 +3,55 @@
 GeoObject::GeoObject(float nx, float ny, float nr, bool npvo) : Object(nx, ny, npvo)
 {
 	radius = nr;
+    type = 0;
+};
+GeoObject::GeoObject(float nx1, float ny1, float nx2, float ny2, float nx3, float ny3, float nx4, float ny4, bool npvo) : Object((nx1 + nx2 + nx3 + nx4)/4, (ny1 + ny2 + ny3 + ny4)/4, npvo)
+{
+     vector<Object> angle1, angle2;
+     angles[0].setX(nx1);
+     angles[0].setY(ny1);
+     angles[1].setX(nx2);
+     angles[1].setY(ny2);
+     angles[2].setX(nx3);
+     angles[2].setY(ny3);
+     angles[3].setX(nx4);
+     angles[3].setY(ny4);
+     for (int i = 0; i < 4; i++)
+         angle1.push_back(angles[i]);
+     for (int i = 0; i < 4; i++)
+     {
+         if (angle1[i].getX() > x)
+             angle2.insert(angle2.begin(), angle1[i]);
+         else
+             angle2.push_back(angle1[i]);
+     }
+     angle1 = angle2;
+     for (int i = 0; i < 3; i++)
+         for (int j = i + 1; j < 4; j++)
+         {
+             if (angle1[i].getX() > x && angle1[j].getX() > x)
+             {
+                 if (angle1[i].getY() < angle1[j].getY())
+                 {
+                     angle2[i] = angle1[j];
+                     angle2[j] = angle1[i];
+                 }
+             }
+             if (angle1[i].getX() < x)
+             {
+                 if (angle1[i].getY() > angle1[j].getY())
+                 {
+                     angle2[i] = angle1[j];
+                     angle2[j] = angle1[i];
+                 }
+             }
+         }
+     for (int i = 0; i < 4; i++)
+         angles[i] = angle2[i];
+     type = 1;
+     radius = max(distance(angles[0]), distance(angles[1]));
+     radius = max(radius, distance(angles[2]));
+     radius = max(radius, distance(angles[3]));
 };
 bool GeoObject::onWay(float x1, float y1, float x2, float y2)
 {
@@ -72,5 +121,18 @@ bool GeoObject::operator==(GeoObject go2)
 float GeoObject::getRadius()
 {
 	return radius;
+};
+bool GeoObject::isRound()
+{
+    if (type == 0)
+        return true;
+    return false;
+};
+Object GeoObject::getAngles(int a)
+{
+    if (a >= 0 && a <= 4)
+        return angles[a];
+    else
+        return Object(x, y);
 };
 

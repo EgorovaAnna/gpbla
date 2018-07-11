@@ -107,13 +107,7 @@ void MainWindow::addAim()
 {
     //добавление цели
     Aim aim(addaim -> coord[0].toFloat(), addaim -> coord[1].toFloat(), addaim -> coord[2].toFloat());
-    Object aimOnImage = mapim -> coordinateToPoint(aim.getX(), aim.getY());
     map -> addAim(aim);
-    /*for (int i = max (0, (int)aimOnImage.getX() - mapImage.height()/50); i < min(mapImage.width(), (int)aimOnImage.getX() + mapImage.height()/50); i++)
-        for (int j = max (0, (int)aimOnImage.getY() - mapImage.height()/50); j < min(mapImage.height(), (int)aimOnImage.getY() + mapImage.height()/50); j++)
-            mapImage.setPixelColor(i, j, QColor("black"));
-    ui -> label -> setPixmap(QPixmap::fromImage(mapImage.scaledToWidth(ui -> label -> width())));/home/anna/prog/gpbla/map*/
-    //QPainter painter(ui -> label)
     mapim -> paintAims(map -> getA(), mapImage);
     if (!(map -> getUAV()).empty())
     {
@@ -128,8 +122,16 @@ void MainWindow::addAim()
 void MainWindow::addObj()
 {
     //добавление препятствия
-    GeoObject obj(addobj -> coord[0].toFloat(), addobj -> coord[1].toFloat(), addobj -> rad.toFloat());
-    map -> addObject(obj);
+    if (addobj -> type == 0)
+    {
+        GeoObject obj(addobj -> coord[0].toFloat(), addobj -> coord[1].toFloat(), addobj -> rad.toFloat());
+        map -> addObject(obj);
+    }
+    else
+    {
+        GeoObject obj(addobj -> coord[0].toFloat(), addobj -> coord[1].toFloat(), addobj -> coord2[0].toFloat(), addobj -> coord2[1].toFloat(), addobj -> coord2[2].toFloat(), addobj -> coord2[3].toFloat(), addobj -> coord2[4].toFloat(), addobj -> coord2[5].toFloat());
+        map -> addObject(obj);
+    }
     mapim -> paintObjects(map -> getO(), mapImage);
     ui -> label -> setPixmap(QPixmap::fromImage(mapImage.scaledToWidth(ui -> label -> width())));
     zoomOut();

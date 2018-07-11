@@ -11,6 +11,7 @@ class Map
 public:
     Map();
     Map(float nx1, float nx2, float ny1, float ny2); //первичная инициализация
+    void sortXY();
     float& operator[](int a);
 	vector<UAV> getUAV();
 	vector<GeoObject> getO();
