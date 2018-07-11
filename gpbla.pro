@@ -41,7 +41,8 @@ SOURCES += \
     GeoObject.cpp \
     ChangeHeight.cpp \
     Aim.cpp \
-    warningadding.cpp
+    warningadding.cpp \
+    saveflight.cpp
 
 HEADERS += \
         mainwindow.h \
@@ -59,7 +60,8 @@ HEADERS += \
     GeoObject.h \
     ChangeHeight.h \
     Aim.h \
-    warningadding.h
+    warningadding.h \
+    saveflight.h
 
 FORMS += \
         mainwindow.ui \
@@ -68,4 +70,5 @@ FORMS += \
     addaim.ui \
     addobject.ui \
     warningadding.ui \
-    warningadding.ui
+    warningadding.ui \
+    saveflight.ui

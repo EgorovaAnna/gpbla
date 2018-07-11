@@ -1,6 +1,10 @@
 #include "Map.h"
 #define pi 3.14159265359
 
+Map::Map()
+{
+
+};
 
 Map::Map(float nx1, float nx2, float ny1, float ny2)
 {
@@ -53,7 +57,7 @@ void Map::addUAV(UAV newUAV)
 void Map::readGIS(string file)
 {
 };
-float Map::operator[](int a)
+float& Map::operator[](int a)
 {
 	if (a == 0)
 		return x1;
@@ -63,6 +67,37 @@ float Map::operator[](int a)
 		return y1;
 	else
 		return y2;
+};
+void Map::sortAims(Object centre)
+{
+    vector<Aim> sortedAims;
+    Aim buf(aims[0].getX(), aims[0].getY(), aims[0].getH());
+    for (int i = 0; i < aims.size(); i++)
+    {
+        if (aims[i].getY() >= centre.getY())
+            sortedAims.insert(sortedAims.begin(), aims[i]);
+        else
+            sortedAims.push_back(aims[i]);
+    }
+    for (int i = 0; i < sortedAims.size(); i++)
+    {
+        for (int j = i + 1; j < sortedAims.size(); j++)
+        {
+            if (sortedAims[i].getY() >= centre.getY() && sortedAims[j].getY() >= centre.getY() && sortedAims[j].getX() >= sortedAims[i].getX())
+            {
+                buf = sortedAims[i];
+                sortedAims[i] = sortedAims[j];
+                sortedAims[j] = buf;
+            }
+            if (sortedAims[i].getY() < centre.getY() && sortedAims[j].getX() <= sortedAims[i].getX())
+            {
+                buf = sortedAims[i];
+                sortedAims[i] = sortedAims[j];
+                sortedAims[j] = buf;
+            }
+        }
+    }
+    aims = sortedAims;
 };
 void Map::divideTer()
 {
@@ -92,9 +127,11 @@ void Map::divideTer()
 		centre.setX(xx);
 		centre.setY(yy);
 	}
+    sortAims(centre);
 	slot = aimssize%uavssize;
 	for (int i = 0; i < uavssize; i++)
 	{
+        uavs[i].emptyRoats();
 		dk = i*360.0/(uavssize);
 		k.push_back(Line(dk*pi/180, centre.getY() - centre.getX()*tan(dk*pi/180)));
 		if (i > 0)
@@ -209,19 +246,13 @@ int Map::calcAims(float k1, float b1, float k2, float b2, Object dir)
 vector<Aim> Map::aimsForUAV(float k1, float b1, float k2, float b2, Object dir)
 {
 	vector<Aim> sum;
-	float x13, x23, y13, y23, k, b;
-	for (int i = 0; i < aims.size(); i++)
-	{
-		k = (dir.getY() - aims[i].getY())/(dir.getX() - aims[i].getX());
-		b = aims[i].getY() - aims[i].getX()*k;
-		x13 = (b - b1)/(tan(k1) - k);
-		x23 = (b - b2)/(tan(k2) - k);
-		y13 = tan(k)*x13 + b;
-		y23 = tan(k)*x23 + b;
-		if(fabs(tan(k1)) > fabs(k))
-			y13 = tan(k1)*x13 + b1;
-		if(fabs(tan(k2)) > fabs(k))
-			y13 = tan(k2)*x23 + b2;
+    float x13, x23, y13, y23;
+    for (int i = 0; i < aims.size(); i++)
+    {
+        x13 = (aims[i].getY() - aims[i].getX()*(dir.getY() - aims[i].getY())/(dir.getX() - aims[i].getX()) - b1)/(tan(k1) - (dir.getY() - aims[i].getY())/(dir.getX() - aims[i].getX()));
+        x23 = (aims[i].getY() - aims[i].getX()*(dir.getY() - aims[i].getY())/(dir.getX() - aims[i].getX()) - b2)/(tan(k2) - (dir.getY() - aims[i].getY())/(dir.getX() - aims[i].getX()));
+        y13 = tan(k1)*x13 + b1;
+        y23 = tan(k2)*x23 + b2;
 		if ((y13 <= min(aims[i].getY(), dir.getY()) || y13 >= max(aims[i].getY(), dir.getY())) && (y23 <= min(aims[i].getY(), dir.getY()) || y23 >= max(aims[i].getY(), dir.getY())) && (x13 <= min(aims[i].getX(), dir.getX()) || x13 >= max(aims[i].getX(), dir.getX())) && (x23 <= min(aims[i].getX(), dir.getX()) || x23 >= max(aims[i].getX(), dir.getX())))
 			sum.push_back(aims[i]); 
 	}

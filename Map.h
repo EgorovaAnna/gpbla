@@ -9,15 +9,17 @@ class Map
 	vector<UAV> uavs;
 	vector<Line> k;
 public:
-	float operator[](int a);
+    Map();
+    Map(float nx1, float nx2, float ny1, float ny2); //первичная инициализация
+    float& operator[](int a);
 	vector<UAV> getUAV();
 	vector<GeoObject> getO();
 	vector<Aim> getA();
 	vector<Line> getK();
-	Map(float nx1, float nx2, float ny1, float ny2); //первичная инициализация
 	void addObject(GeoObject newGO); 
 	void addAim(Aim newAim);
 	void addUAV(UAV nemUAV);
+    void sortAims(Object centre);
 	void readGIS(string file); //у меня где-то есть работа с этим форматом
 	void divideTer();//разделение территории, каждому бла назначаются цели и передается вектор объектов на его территоррии (???)
 	bool allUVAtogether();//возвращает true, если все бла рядом

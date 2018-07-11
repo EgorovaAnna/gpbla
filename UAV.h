@@ -22,6 +22,7 @@ public:
 	void addAim(Aim newAim);
 	void iteration(float dt); //моделирование полета
 	void deleteAim(Aim aim); //когда цель кто-то отснял
+    void emptyRoats();
 	void setR(float rad);
 	void setF(float f);
 	void setW(float w);

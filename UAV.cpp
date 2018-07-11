@@ -231,3 +231,7 @@ vector<Object> UAV::getRoat()
 {
 	return points;
 };
+void UAV::emptyRoats()
+{
+    points.clear();
+};

@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1074</width>
-    <height>769</height>
+    <width>1206</width>
+    <height>811</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -18,7 +18,7 @@
     <property name="geometry">
      <rect>
       <x>30</x>
-      <y>150</y>
+      <y>140</y>
       <width>191</width>
       <height>81</height>
      </rect>
@@ -31,7 +31,7 @@
     <property name="geometry">
      <rect>
       <x>30</x>
-      <y>260</y>
+      <y>240</y>
       <width>191</width>
       <height>81</height>
      </rect>
@@ -44,7 +44,7 @@
     <property name="geometry">
      <rect>
       <x>30</x>
-      <y>370</y>
+      <y>340</y>
       <width>191</width>
       <height>81</height>
      </rect>
@@ -57,7 +57,7 @@
     <property name="geometry">
      <rect>
       <x>30</x>
-      <y>480</y>
+      <y>440</y>
       <width>191</width>
       <height>81</height>
      </rect>
@@ -70,7 +70,7 @@
     <property name="geometry">
      <rect>
       <x>30</x>
-      <y>590</y>
+      <y>540</y>
       <width>191</width>
       <height>81</height>
      </rect>
@@ -95,7 +95,7 @@
    <widget class="QLabel" name="label">
     <property name="geometry">
      <rect>
-      <x>260</x>
+      <x>240</x>
       <y>40</y>
       <width>791</width>
       <height>631</height>
@@ -105,13 +105,117 @@
      <string/>
     </property>
    </widget>
+   <widget class="QPushButton" name="pushButton_7">
+    <property name="geometry">
+     <rect>
+      <x>30</x>
+      <y>640</y>
+      <width>191</width>
+      <height>81</height>
+     </rect>
+    </property>
+    <property name="maximumSize">
+     <size>
+      <width>16777215</width>
+      <height>81</height>
+     </size>
+    </property>
+    <property name="text">
+     <string>Загрузить полетное 
+ задание</string>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="rightMap">
+    <property name="geometry">
+     <rect>
+      <x>640</x>
+      <y>680</y>
+      <width>61</width>
+      <height>60</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>RIGHT</string>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="leftMap">
+    <property name="geometry">
+     <rect>
+      <x>570</x>
+      <y>680</y>
+      <width>61</width>
+      <height>60</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>LEFT</string>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="upMap">
+    <property name="geometry">
+     <rect>
+      <x>1050</x>
+      <y>290</y>
+      <width>61</width>
+      <height>60</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>UP</string>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="downMap">
+    <property name="geometry">
+     <rect>
+      <x>1050</x>
+      <y>360</y>
+      <width>61</width>
+      <height>60</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>DOWN</string>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="plusSize">
+    <property name="geometry">
+     <rect>
+      <x>1050</x>
+      <y>60</y>
+      <width>61</width>
+      <height>60</height>
+     </rect>
+    </property>
+    <property name="toolTip">
+     <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Увеличить масштаб&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+    </property>
+    <property name="text">
+     <string>+</string>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="minusSize">
+    <property name="geometry">
+     <rect>
+      <x>1050</x>
+      <y>130</y>
+      <width>61</width>
+      <height>60</height>
+     </rect>
+    </property>
+    <property name="toolTip">
+     <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Уменьшить масштаб&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+    </property>
+    <property name="text">
+     <string>-</string>
+    </property>
+   </widget>
   </widget>
   <widget class="QMenuBar" name="menuBar">
    <property name="geometry">
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>1074</width>
+     <width>1206</width>
      <height>22</height>
     </rect>
    </property>
