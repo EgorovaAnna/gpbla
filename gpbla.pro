@@ -37,12 +37,14 @@ SOURCES += \
     Object.cpp \
     MapImage.cpp \
     Map.cpp \
-    Image.cpp \
     GeoObject.cpp \
     ChangeHeight.cpp \
     Aim.cpp \
     warningadding.cpp \
-    saveflight.cpp
+    saveflight.cpp \
+    Image.cpp \
+    ImageForPNM.cpp \
+    ImageForQt.cpp
 
 HEADERS += \
         mainwindow.h \
@@ -56,12 +58,14 @@ HEADERS += \
     Object.h \
     MapImage.h \
     Map.h \
-    Image.h \
     GeoObject.h \
     ChangeHeight.h \
     Aim.h \
     warningadding.h \
-    saveflight.h
+    saveflight.h \
+    Image.h \
+    ImageForPNM.h \
+    ImageForQt.h
 
 FORMS += \
         mainwindow.ui \

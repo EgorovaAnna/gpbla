@@ -21,12 +21,16 @@ private slots:
     void on_pushButton_2_clicked();
     void on_pushButton_clicked();
 
+    void on_checkBox_clicked();
+
 public:
     std::string path;
     std::string name;
+    bool createPBF = false;
 
 signals:
     void saved();
+    void savePBF();
     void cancelSaving();
 
 private:

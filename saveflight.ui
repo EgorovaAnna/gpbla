@@ -125,6 +125,19 @@
     <string>Введите путь к файлу для сохранения и название</string>
    </property>
   </widget>
+  <widget class="QCheckBox" name="checkBox">
+   <property name="geometry">
+    <rect>
+     <x>40</x>
+     <y>270</y>
+     <width>321</width>
+     <height>51</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>Создать файл .pbf юоевого распоряжения</string>
+   </property>
+  </widget>
  </widget>
  <resources/>
  <connections/>

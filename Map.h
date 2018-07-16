@@ -1,5 +1,6 @@
 #include "UAV.h"
 #include <unistd.h>
+#include "src/proto/RouteData.pb.h"
 
 class Map
 {
@@ -27,5 +28,6 @@ public:
 	int calcAims(float k1, float b1, float k2, float b2, Object dir); // подсчет количества целей между двумя прямыми
 	vector<Aim> aimsForUAV(float k1, float b1, float k2, float b2, Object dir);
 	vector<GeoObject> goForUAV(float k1, float b1, float k2, float b2, Object dir);
+    void createPBF(string filename);
 };
 

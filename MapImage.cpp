@@ -16,23 +16,22 @@ void MapImage::loadFile(string file)
 	fin >> buf;
 	fin >> tsize[0] >> tsize[1];
 	fin >> buf;
-	image = new Image(tsize);
-	image -> loadIm(fin);
+    image = new ImageForPNM(tsize);
+    image -> loadIm(file);
 }
-void MapImage::setImage(int x, int y)
+void MapImage::setQImage(QImage *qimage)
 {
-	int tsize[2] = {x, y};
-	image = new Image(tsize);
+    image = new ImageForQt(qimage);
 }
-Object MapImage::coordinateToPoint(Object a, int color)
+Object MapImage::coordinateToPoint(Object a)
 {
-	return Object((int)(a.getX() - (*map)[0])*(image -> getX())/((*map)[1] - (*map)[0]), (int)(a.getY() - (*map)[2])*(image -> getY())/((*map)[3] - (*map)[2]), color);
+    return Object((int)(a.getX() - (*map)[0])*(image -> getX())/((*map)[1] - (*map)[0]), (int)(a.getY() - (*map)[2])*(image -> getY())/((*map)[3] - (*map)[2]));
 }
-Object MapImage::coordinateToPoint(float x, float y, int color)
+Object MapImage::coordinateToPoint(float x, float y)
 {
-	return Object((int)(x - (*map)[0])*(image -> getX())/((*map)[1] - (*map)[0]), (int)(y - (*map)[2])*(image -> getY())/((*map)[3] - (*map)[2]), color);
+    return Object((int)(x - (*map)[0])*(image -> getX())/((*map)[1] - (*map)[0]), (int)(y - (*map)[2])*(image -> getY())/((*map)[3] - (*map)[2]));
 }
-void MapImage::paintLine(vector<Object> objects, int color)
+void MapImage::paintLine(vector<Object> objects, int color[3])
 {
 	vector<Object> points;
 	int x1, x2, y1, y2;
@@ -60,76 +59,35 @@ void MapImage::paintLine(vector<Object> objects, int color)
 		}
 	}
 }
-void MapImage::paintLine(vector<Object> objects, QImage &im, QColor color)
+void MapImage::paintLine(vector<Object> objects, std::string color)
 {
-	vector<Object> points;
-	int x1, x2, y1, y2;
-	for (int i = 0; i < objects.size(); i++)
-		points.push_back(coordinateToPoint(objects[i]));
-	for (int i = 0; i < objects.size() - 1; i++)
-	{
-		x1 = points[i].getX();
-		y1 = points[i].getY();
-		x2 = points[i + 1].getX();
-		y2 = points[i + 1].getY();
-		drawLine(x1, y1, x2, y2, im, color);
-		drawLine(x1 - (x1 == 0 ? 0 : 1), y1, x2 - (x2 == 0 ? 0 : 1), y2, im, color);
-		drawLine(x1, y1 + (y1 == image -> getY() ? 0 : 1), x2, y2 + (y2 == image -> getY() ? 0 : 1), im, color);
-		for (int j = -1; j > -5; j--)
-		{
-			if (y1 - j >= 0 && y2 - j >= 0)
-				drawLine(x1, y1 - j, x2, y2 - j, im, color);
-			else
-				drawLine(x1, y1 + 5 - j, x2, y2 + 5 - j, im, color);
-			if (x1 - j >= 0 && x2 - j >= 0)
-				drawLine(x1 -j, y1, x2 - j, y2, im, color);
-			else
-				drawLine(x1 + 5 - j, y1, x2 + 5 - j, y2, im, color);
-		}
-	}
+    vector<Object> points;
+    int x1, x2, y1, y2;
+    for (int i = 0; i < objects.size(); i++)
+        points.push_back(coordinateToPoint(objects[i]));
+    for (int i = 0; i < objects.size() - 1; i++)
+    {
+        x1 = points[i].getX();
+        y1 = points[i].getY();
+        x2 = points[i + 1].getX();
+        y2 = points[i + 1].getY();
+        image -> drawLine(x1, y1, x2, y2, color);
+        image -> drawLine(x1 - (x1 == 0 ? 0 : 1), y1, x2 - (x2 == 0 ? 0 : 1), y2, color);
+        image -> drawLine(x1, y1 + (y1 == image -> getY() ? 0 : 1), x2, y2 + (y2 == image -> getY() ? 0 : 1), color);
+        for (int j = -1; j > -5; j--)
+        {
+            if (y1 - j >= 0 && y2 - j >= 0)
+                image -> drawLine(x1, y1 - j, x2, y2 - j, color);
+            else
+                image -> drawLine(x1, y1 + 5 - j, x2, y2 + 5 - j, color);
+            if (x1 - j >= 0 && x2 - j >= 0)
+                image -> drawLine(x1 -j, y1, x2 - j, y2, color);
+            else
+                image -> drawLine(x1 + 5 - j, y1, x2 + 5 - j, y2, color);
+        }
+    }
 }
-void MapImage::drawLine(int x1, int y1, int x2, int y2, QImage &im, QColor color)
-{
-	const int deltaX = abs(x2 - x1);
-	const int deltaY = abs(y2 - y1);
-	const int signX = x1 < x2 ? 1 : -1;
-	const int signY = y1 < y2 ? 1 : -1;
-	int error = deltaX - deltaY;
-	int i;
-	if (x1 == x2||y1 == y2)
-	{
-		if (x1 == x2)
-		{
-			for (i = y1; i!= y2; i = i + signY)
-				im.setPixelColor(x1, i, color);
-		}
-		if(y1 == y2)
-		{
-			for (i = x1; i!= x2; i = i + signX)
-				im.setPixelColor(i, y1, color);
-		}
-	}
-	else
-	{
-		im.setPixelColor(x2, y2, color);	
-		while(x1 != x2 || y1 != y2)
-		{
-			im.setPixelColor(x1, y1, color);
-			int error2 = error*2;
-			if (error2 > -deltaY)
-			{
-				error -= deltaY;
-				x1 += signX;
-			}
-			if (error2 < deltaX)
-			{
-				error += deltaX;
-				y1 += signY;
-			}
-		}
-	}
-}
-void MapImage::paintObjects(vector<GeoObject> objects, int color)
+void MapImage::paintObjects(vector<GeoObject> objects, int color[3])
 {
 	vector<Object> points;
 	vector<int> rad;
@@ -144,7 +102,7 @@ void MapImage::paintObjects(vector<GeoObject> objects, int color)
 				if (points[i].distanceXY(j, k) <= rad[i])
 					image -> drawPoint(j, k, color);
 }
-void MapImage::paintObjects(vector<GeoObject> objects, QImage &im, QColor color)
+void MapImage::paintObjects(vector<GeoObject> objects, std::string color)
 {
     vector<Object> points, obj4;
 	vector<int> rad;
@@ -160,7 +118,7 @@ void MapImage::paintObjects(vector<GeoObject> objects, QImage &im, QColor color)
             for (int j = 0; j < 4; j++)
                 obj4.push_back((objects[i].getAngles(j)));
             obj4.push_back(objects[i].getAngles(0));
-            paintLine(obj4, im, color);
+            paintLine(obj4, color);
             obj4.clear();
         }
 	}
@@ -168,7 +126,7 @@ void MapImage::paintObjects(vector<GeoObject> objects, QImage &im, QColor color)
 		for (int j = max((int)points[i].getX() - rad[i], 0); j <= min((int)points[i].getX() + rad[i], image -> getX()); j++)
 			for (int k = max((int)points[i].getY() - rad[i], 0); k <= min((int)points[i].getY() + rad[i], image -> getY()); k++)
 				if (points[i].distanceXY(j, k) <= rad[i])
-					im.setPixelColor(j, k, color);
+                    image -> drawPoint(j, k, color);
 }
 /*void MapImage::paintSpline(vector<Object> objects, int color, bool cap)
 {
@@ -339,7 +297,7 @@ void MapImage::paintObjects(vector<GeoObject> objects, QImage &im, QColor color)
 		}
 	}
 }*/
-void MapImage::paintAims(vector<Aim> aims, QImage &im, QColor color)
+void MapImage::paintAims(vector<Aim> aims, std::string color)
 {
 	vector<Object> points;
     int rad = 20;
@@ -349,12 +307,12 @@ void MapImage::paintAims(vector<Aim> aims, QImage &im, QColor color)
 		for (int j = max((int)points[i].getX() - rad, 0); j <= min((int)points[i].getX() + rad, image -> getX()); j++)
 			for (int k = max((int)points[i].getY() - rad, 0); k <= min((int)points[i].getY() + rad, image -> getY()); k++)
 				if (points[i].distanceXY(j, k) <= rad)
-					im.setPixelColor(j, k, color);
+                    image -> drawPoint(j, k, color);
 }
-void MapImage::paintAims(vector<Aim> aims)
+void MapImage::paintAims(vector<Aim> aims, int color[3])
 {
 	vector<Object> points;
-	int rad = 20, color[3] = {0, 255, 0};
+    int rad = 20;//, color[3] = {0, 255, 0};
 	for (int i = 0; i < aims.size(); i++)
 		points.push_back(coordinateToPoint(aims[i]));
 	for (int i = 0; i < aims.size(); i++)
@@ -363,7 +321,7 @@ void MapImage::paintAims(vector<Aim> aims)
 				if (points[i].distanceXY(j, k) <= rad)
 					image -> drawPoint(j, k, color);
 }
-void MapImage::paintPointX(int x, int y, int color)
+void MapImage::paintPointX(int x, int y)
 {
 	//int rad = 3, color3[3] = {((color == 0) ? 255 : color), 0, 0};
 	int rad = 3, color3[3] = {0, 0, 0};
@@ -374,7 +332,7 @@ void MapImage::paintPointX(int x, int y, int color)
 	for (int k = max(y - rad, 0); k <= min(y + rad, image -> getY()); k++)
 		image -> drawPoint(x - 1, k, color3);
 }
-void MapImage::paintPointY(int x, int y, int color)
+void MapImage::paintPointY(int x, int y)
 {
 	//int rad = 3, color3[3] = {((color == 0) ? 255 : color), 0, 0};
 	int rad = 3, color3[3] = {0, 0, 0};
@@ -394,10 +352,10 @@ void MapImage::paintSqare(int x, int y, int size, int color)
 }
 void MapImage::paintAll(int a, int b, int c)
 {
-	image -> paintAll(a, b, c);
+    //image -> paintAll(a, b, c);
 }
 void MapImage::print(string file)
 {
-	image -> showFile(file);
+    image -> showFile(file);
 }
 

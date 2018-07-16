@@ -57,6 +57,7 @@ private:
     void addAim();
     void addObj();
     void saved();
+    void savePBF();
     void zoomOut();
     void deepen();
 

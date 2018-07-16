@@ -337,4 +337,56 @@ vector<Line> Map::getK()
 {
 	return k;
 };
+/*
+void Map::createPBF(string filename)
+{
+    int size;
+    if (!(size = uavs.size()))
+    {
+        QMessageBox::information(0, "Маршруты не сформированы!");
+        return;
+    }
+    for (int i = 0; i < size; i++)
+    {
+        if(currentOperation->flightTasks.at(i)->uuid.isNull())
+        {
+            currentOperation->flightTasks.at(i)->uuid = QUuid::createUuid();
+            OperFlightTaskDAO dao;
+            dao.saveOperFlightTask(currentOperation);
+        }
 
+        currentOperation->flightTasks.at(i)->calcRouteTime();
+        DMRpc::Route route;
+        {
+            DMRpc::Uuid* uuid = getProtoUuid(currentOperation->flightTasks.at(i)->uuid);
+            route.set_allocated_id(uuid);
+            route.set_name(QString::number(currentOperation->flightTasks.at(i)->number).toUtf8().data());
+            DMRpc::UavIdentity* uav = new DMRpc::UavIdentity;
+            uav->set_id(currentOperation->flightTasks.at(i)->avt->number);
+            uav->set_type(currentOperation->flightTasks.at(i)->avt->avtType->id);
+            route.set_allocated_uav(uav);
+
+            QList<OperPPM> ppmRoute = currentOperation->flightTasks.at(i)->route;
+            int rSize = ppmRoute.size();
+            for (int j = 0; j < rSize; j++)
+            {
+                DMRpc::Route_RoutePoint* point = route.add_points();
+                point->set_id(j+1);
+                DMRpc::Point* p = new DMRpc::Point;
+                DMRpc::GeoCoordinates* geo = new DMRpc::GeoCoordinates;
+                geo->set_latitude(ppmRoute.at(j).point.y);
+                geo->set_longitude(ppmRoute.at(j).point.x);
+                geo->set_altitude(ppmRoute.at(j).h);
+                //geo->set_epsg(); //TODO: óêàçàòü ÑÊ (ÏÇ-90)?
+                p->set_allocated_geo(geo);
+                point->set_timestamp(ppmRoute.at(j).time.toMSecsSinceEpoch());
+                point->set_distance(round(ppmRoute.at(j).s));
+                point->set_allocated_coords(p);
+            }
+        }
+    }
+    std::fstream output("/opt/route.pbf", std::ios::out | std::ios::trunc | std::ios::binary);
+    if (!route.SerializeToOstream(&output))
+        QMessageBox::information(this, "ÏÊ \"Ïëàíèðîâàíèå\"", "Îøèáêà çàïèñè ìàðøðóòà.");
+};
+*/

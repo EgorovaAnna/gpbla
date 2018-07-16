@@ -40,3 +40,8 @@ void SaveFlight::warningClose()
 {
     this -> show();
 }
+
+void SaveFlight::on_checkBox_clicked()
+{
+   createPBF = ui -> checkBox -> isChecked();
+}

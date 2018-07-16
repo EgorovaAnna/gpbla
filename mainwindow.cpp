@@ -28,6 +28,7 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(addaim, &AddAim::add, this, &MainWindow::addAim);
     connect(addobj, &AddObject::add, this, &MainWindow::addObj);
     connect(saveflight, &SaveFlight::saved, this, &MainWindow::saved);
+    connect(saveflight, &SaveFlight::savePBF, this, &MainWindow::savePBF);
     connect(addmap, &AddMap::cancelAdding, this, &MainWindow::show);
     connect(addbla, &AddBLA::cancelAdding, this, &MainWindow::show);
     connect(addaim, &AddAim::cancelAdding, this, &MainWindow::show);
@@ -67,6 +68,31 @@ void MainWindow::saved()
     }
     fout.close();
 }
+void MainWindow::savePBF()
+{
+    ofstream fout;
+    vector<UAV> uav = map -> getUAV();
+    vector <Object> object;
+    vector<GeoObject> go = map -> getO();
+    vector<Aim> aim = map -> getA();
+    const string str = (saveflight -> path + "/" + saveflight -> name);
+    fout.open(str);
+    fout << "Заданы цели: " << "\n\t\t";
+    for (int i = 0; i < aim.size(); i++)
+        fout << "(" << aim[i].getX() << " ; " << aim[i].getY() << " )\n\t\t";
+    fout << "\nЗаданы препятствия: " << "\n\t\t";
+    for (int i = 0; i < go.size(); i++)
+        fout << "(" << go[i].getX() << " ; " << go[i].getY() << " )\n\t\t";
+    for (int i = 0; i < uav.size(); i++)
+    {
+        object = uav[i].getRoat();
+        fout << "\nПоворотные точки маршрута БЛА № " << i + 1 << ":\n    Вылет из точки "; //добавить вывод характеристик?
+        for (int j = 0; j < object.size() - 1; j++)
+            fout << "(" << object[j].getX() << " ; " << object[j].getY() << " )\n\t\t\t";
+        fout << "Возвращение в точку " << "(" << object[object.size() - 1].getX() << " ; " << object[object.size() - 1].getY() << " )\n\n";
+    }
+    fout.close();
+}
 
 void MainWindow::addMap()
 {
@@ -82,7 +108,7 @@ void MainWindow::addMap()
     map -> operator [](1) = addmap -> latlon[1][0].toFloat();
     map -> operator [](2) = addmap -> latlon[0][3].toFloat();
     map -> operator [](3) = addmap -> latlon[1][3].toFloat();
-    mapim -> setImage(mapImage.width(), mapImage.height());
+    mapim -> setQImage(&mapImage);
     this -> show();
 }
 
@@ -108,7 +134,7 @@ void MainWindow::addAim()
     //добавление цели
     Aim aim(addaim -> coord[0].toFloat(), addaim -> coord[1].toFloat(), addaim -> coord[2].toFloat());
     map -> addAim(aim);
-    mapim -> paintAims(map -> getA(), mapImage);
+    mapim -> paintAims(map -> getA());
     if (!(map -> getUAV()).empty())
     {
         ui -> pushButton_5 -> setEnabled(true);
@@ -132,7 +158,7 @@ void MainWindow::addObj()
         GeoObject obj(addobj -> coord[0].toFloat(), addobj -> coord[1].toFloat(), addobj -> coord2[0].toFloat(), addobj -> coord2[1].toFloat(), addobj -> coord2[2].toFloat(), addobj -> coord2[3].toFloat(), addobj -> coord2[4].toFloat(), addobj -> coord2[5].toFloat());
         map -> addObject(obj);
     }
-    mapim -> paintObjects(map -> getO(), mapImage);
+    mapim -> paintObjects(map -> getO());
     ui -> label -> setPixmap(QPixmap::fromImage(mapImage.scaledToWidth(ui -> label -> width())));
     zoomOut();
     this -> show();
@@ -173,7 +199,7 @@ void MainWindow::on_pushButton_5_clicked()
         map -> divideTer();
         vector<UAV> uav = map -> getUAV();
         for (int i = 0; i < uav.size(); i++)
-            mapim -> paintLine(uav[i].getRoat(), mapImage, QColor("red"));
+            mapim -> paintLine(uav[i].getRoat(), "red");
         ui -> label -> setPixmap(QPixmap::fromImage(mapImage.scaledToWidth(ui -> label -> width())));
         zoomOut();
         saveflight -> show();
