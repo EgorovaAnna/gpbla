@@ -25,8 +25,12 @@ void SaveFlight::on_pushButton_clicked()
 {
     name = (ui -> fileName -> text()).toStdString();
     path = (ui -> pathLine -> text()).toStdString();
-    if (!path.empty() && !name.empty())
+    if (!name.empty())
     {
+        if (path.empty())
+        {
+            path = "/home/";
+        }
         this -> close();
         emit saved();
     }
@@ -41,7 +45,3 @@ void SaveFlight::warningClose()
     this -> show();
 }
 
-void SaveFlight::on_checkBox_clicked()
-{
-   createPBF = ui -> checkBox -> isChecked();
-}

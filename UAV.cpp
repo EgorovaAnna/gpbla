@@ -1,14 +1,26 @@
 #include "UAV.h"
 
 
-UAV::UAV(float nx, float ny, float nz, int nt)
+UAV::UAV(double nx, double ny, double nz, double fA, double cH)
 {
 	x = nx;
 	y = ny;
 	z = nz;
-	t = nt;
+    radioview = -1;
+    if (fA != 0)
+        flightAltitude = fA;
+    else
+        flightAltitude = 3000;
+    focus = 500;
+    changingHeight = cH;
 };
-void UAV::addPoint(Object point)
+UAV::UAV(double nx, double ny, double nz)
+{
+    x = nx;
+    y = ny;
+    z = nz;
+};
+void UAV::addPoint(ChangeHeight point)
 {
 	points.push_back(point);
 }; 
@@ -16,47 +28,60 @@ void UAV::addAim(Aim newAim)
 {
 	aims.push_back(newAim);
 };
-void UAV::iteration(float dt)
+void UAV::iteration(double dt)
 {
 	
 }; 
-void UAV::setR(float rad)
+void UAV::setR(double rad)
 {
-	radioview = rad;
+    if (rad > 0)
+        radioview = rad;
 };
-void UAV::setF(float f)
+void UAV::setF(double f)
 {
-	focus = f;
+    if (f > 0)
+        focus = f;
 };
-void UAV::setW(float w)
+void UAV::setW(double w)
 {
-	way = w;
+    if (w > 0)
+        way = w;
 };
-void UAV::setH(float h)
+void UAV::setH(double h)
 {
-	maxH = h;
+    if (h > 0)
+        maxH = h;
 };
-void UAV::setV(float v)
+void UAV::setV(double v)
 {
-	velocity = v;
+    if (v > 0)
+        velocity = v;
 };
-float UAV::getR()
+void UAV::setX(double nx)
+{
+    x = nx;
+};
+void UAV::setY(double ny)
+{
+    y = ny;
+};
+double UAV::getR()
 {
 	return radioview;
 };
-float UAV::getF()
+double UAV::getF()
 {
 	return focus;
 };
-float UAV::getW()
+double UAV::getW()
 {
 	return way;
 };
-float UAV::getH()
+double UAV::getH()
 {
 	return maxH;
 };
-float UAV::getV()
+double UAV::getV()
 {
 	return velocity;
 };
@@ -66,36 +91,42 @@ void UAV::deleteAim(Aim aim)
 		if (*i == aim)
 			aims.erase(i);
 };
-float UAV::getX()
+double UAV::getX()
 {
 	return x;
 };
-float UAV::getY()
+double UAV::getY()
 {
 	return y;
 };
 void UAV::roat(vector<Aim> aims)
 {
+    if (aims.empty())
+        return;
 	int i, j, aimssize = aims.size(), iter, k, max = (int)pow(10, 10);
+    if (aimssize == 0)
+        return;
+    points.clear();
 	if (aimssize == 1 || aimssize == 2)
 	{
-		points.push_back(Object(x, y));
-		points.push_back(aims[0]);
+        points.push_back(ChangeHeight(x, y, z));
+        points.push_back(ChangeHeight(aims[0]));
+        cout << aims[0].getH() << " " << points[1].getH()<< "\n ";
 		if (aimssize == 2)
-			points.push_back(aims[1]);
-		points.push_back(Object(x, y));
+            points.push_back(ChangeHeight(aims[1]));
+        points.push_back(ChangeHeight(x, y, z));
 	}
 	else
 	{
-		float **mas = new float*[aimssize + 1], **mas2 = new float*[aimssize + 1]; // матрица растояний
-		float *g = new float[aimssize + 1], *h = new float[aimssize + 1];
-		float min1, min2, mark[3], minel1, minel2;
+        double **mas = new double*[aimssize + 1], **mas2 = new double*[aimssize + 1]; // матрица растояний
+        double *g = new double[aimssize + 1], *h = new double[aimssize + 1];
+        double min1, min2, mark[3], minel1, minel2;
 		vector<int> column, line;
 		vector<int> from, to;
 		for(i = 0; i <= aimssize; i++)
 		{
-			mas[i] = new float[aimssize + 1];
-			mas2[i] = new float[aimssize + 1];
+            mas[i] = new double[aimssize + 1];
+            mas2[i] = new double[aimssize + 1];
 			column.push_back(i); line.push_back(i);
 		}
 		for(i = 1; i <= aimssize; i++)
@@ -178,7 +209,7 @@ void UAV::roat(vector<Aim> aims)
 		}
 		from.push_back(line[0]);
 		to.push_back(column[0]);
-		points.push_back(Object(x, y));
+        points.push_back(ChangeHeight(x, y, z));
 		k = 0;
 		while (k != -1)
 			for(j = 0; j < from.size(); j++)
@@ -187,12 +218,12 @@ void UAV::roat(vector<Aim> aims)
 					if (to[j] != 0)
 					{
 						k = to[j];
-						points.push_back(aims[to[j] - 1]);
+                        points.push_back(ChangeHeight(aims[to[j] - 1]));
 					}
 					else
 						k = -1;
 				}
-		points.push_back(Object(x, y));
+        points.push_back(ChangeHeight(x, y, z));
 		for(i = 0; i <= aimssize; i++)
 		{
 			delete []mas[i]; delete []mas2[i];
@@ -203,31 +234,111 @@ void UAV::roat(vector<Aim> aims)
 };
 void UAV::elaborateRoat(vector<GeoObject> objects)
 {
-	//cout << '\n' << "___UAV___"  << '\n';
-	vector<Object> roating(points);
-	//for (int i = 0; i < objects.size(); i++)
-	//	cout << objects[i].getX() << "; " << objects[i].getY() << "     ";
-	//cout << '\n' << "_____"  << '\n' << "points:  ";
-	vector<GeoObject> onway;
-	points.clear();
-	for (int i = 0; i < roating.size() - 1; i++)
-	{
-		points.push_back(roating[i]);
-		for (int j = 0; j < objects.size(); j++)
-			if (objects[j].onWay(points.back().getX(), points.back().getY(), roating[i + 1].getX(), roating[i + 1].getY()))
-				onway.push_back(objects[j]);
-		sort(onway.begin(), onway.end(), points.back());
-		for (int j = 0; j < onway.size(); j++)
-			if (onway[j].onWay(points.back().getX(), points.back().getY(), roating[i + 1].getX(), roating[i + 1].getY()))
-				points.push_back(onway[j].point(points.back().getX(), points.back().getY(), roating[i + 1].getX(), roating[i + 1].getY()));
-		onway.clear();
-	}
-	points.push_back(roating.back());
-	//cout << '\n' << "_____"  << '\n' << "points1:  ";
-	//for (int i = 0; i < points.size(); i++)
-	//	cout << points[i].getX() << "; " << points[i].getY() << "    ";
+    if (points.empty())
+        return;
+    ChangeHeight go;
+    for(int i = 1; i < points.size() - 1; i++)
+        points[i].setH(points[i].getH() + focus);
+    cout << points[1].getH() << "     \n";
+    vector<ChangeHeight> roating(points);
+    int count = 0;
+    if (!objects.empty())
+    {
+        vector<GeoObject> onway;
+        points.clear();
+        for (int i = 0; i < roating.size() - 1; i++)
+        {
+            points.push_back(roating[i]);
+            for (int j = 0; j < objects.size(); j++)
+                if (objects[j].onWay(points.back().getX(), points.back().getY(), roating[i + 1].getX(), roating[i + 1].getY()))
+                    onway.push_back(objects[j]);
+            sort(onway.begin(), onway.end(), points.back());
+            for (int j = 0; j < onway.size(); j++)
+                if (onway[j].onWay(points.back().getX(), points.back().getY(), roating[i + 1].getX(), roating[i + 1].getY()))
+                {
+                    go = onway[j].point(points.back().getX(), points.back().getY(), roating[i + 1].getX(), roating[i + 1].getY());
+                    go.setH(flightAltitude);
+                    points.push_back(go);
+                }
+            onway.clear();
+        }
+        points.push_back(roating.back());
+    }
+    roating = points;
+    if (points.size() == 3)
+    {
+        if (points[1].getH() + focus != flightAltitude)
+        {
+            double r = (flightAltitude - (points[1].getH()))/tan(changingHeight*3.14/180) + (flightAltitude - (points[0].getH()))/tan(changingHeight*3.14/180);
+            if (points[0].distance(points[1]) >= r)
+            {
+                r = (fabs(flightAltitude - (points[0].getH()))/tan(changingHeight*3.14/180));
+                go.setX(points[0].getX() + (points[1].getX() - points[0].getX())*r/points[0].distance(points[1]));
+                go.setY(points[0].getY() + (points[1].getY() - points[0].getY())*r/points[0].distance(points[1]));
+                go.setH(flightAltitude);
+                cout << go.getX() << " " << go.getY() << " " << r << "     \n";
+                points.emplace(points.begin() + 1, go);
+                count++;
+                points.emplace(points.end() - 1, go);
+                r = (fabs(flightAltitude - (points[1 + count].getH()))/tan(changingHeight*3.14/180));
+                go.setX(points[1 + count].getX() - (points[1 + count].getX() - points[0].getX())*r/points[0].distance(points[1 + count]));
+                go.setY(points[1 + count].getY() - (points[1 + count].getY() - points[0].getY())*r/points[0].distance(points[1 + count]));
+                go.setH(flightAltitude);
+                cout << go.getX() << " " << go.getY() <<" " << r << " " << (points[1 + count].getH()) << " " << tan(changingHeight*3.14/180)<< "      \n";
+                points.emplace(points.begin() + 2, go);
+                points.emplace(points.end() - 2, go);
+            }
+        }
+        return;
+    }
+    for (int i = 0; i < points.size(); i++)
+    {
+        if (points[i + 1].getH() != flightAltitude)
+        {
+            double r = abs((flightAltitude - (points[i].getH()))/tan(changingHeight*3.14/180)) + abs((flightAltitude - (points[i + 1].getH()))/tan(changingHeight*3.14/180));
+            cout << points[i].getX() << " "  << points[i].getY() << "; " << points[i + 1].getX() << " " << points[i + 1].getY() << "     "<< r << endl;
+            if ((points[i + 1].distance(points[i]) > r && points[i + 1].getH() == flightAltitude))
+            {
+                if (points[i].getH() != flightAltitude)
+                {
+                    r = (fabs(flightAltitude - (points[i].getH()))/tan(changingHeight*3.14/180))/points[i].distance(points[i + 1]);
+                    go.setX(points[i].getX() + (points[i + 1].getX() - points[i].getX())*r);
+                    go.setY(points[i].getY() + (points[i + 1].getY() - points[i].getY())*r);
+                    go.setH(flightAltitude);
+                    roating.emplace(roating.begin() + i + 1 + count, go);
+                    count++;
+                }
+                if (points[i + 1].getH() != flightAltitude)
+                {
+                    r = (fabs(flightAltitude - (points[i + 1].getH()))/tan(changingHeight*3.14/180))/points[i].distance(points[i + 1]);
+                    go.setX(points[i + 1].getX() - (points[i + 1].getX() - points[i].getX())*r);
+                    go.setY(points[i + 1].getY() - (points[i + 1].getY() - points[i].getY())*r);
+                    go.setH(flightAltitude);
+                    roating.emplace(roating.begin() + i + 1 + count, go);
+                    count++;
+                }
+            }
+        }
+    }
+    points = roating;
+    double r = (flightAltitude - points[points.size() - 2].getH())/tan(changingHeight*3.14/180) + (flightAltitude - points.back().getH())/tan(changingHeight*3.14/180);
+    if (points[points.size() - 2].distance(points.back()) > r)
+    {
+        r = fabs(flightAltitude - points[points.size() - 2].getH())/tan(changingHeight*3.14/180);
+        r = r/points[points.size() - 2].distance(points.back());
+        go.setX(points[points.size() - 2].getX() + (points.back().getX() - points[points.size() - 2].getX())*r);
+        go.setY(points[points.size() - 2].getY() + (points.back().getY() - points[points.size() - 2].getY())*r);
+        go.setH(flightAltitude);
+        points.emplace(points.begin() + points.size() - 1, go);
+        r = fabs(flightAltitude - points.back().getH())/tan(changingHeight*3.14/180);
+        r = r/points[points.size() - 2].distance(points.back());
+        go.setX(points.back().getX() - (points.back().getX() - points[points.size() - 2].getX())*r);
+        go.setY(points.back().getY() - (points.back().getY() - points[points.size() - 2].getY())*r);
+        go.setH(flightAltitude);
+        points.emplace(points.begin() + points.size() - 1, go);
+    }
 };
-vector<Object> UAV::getRoat()
+vector<ChangeHeight> UAV::getRoat()
 {
 	return points;
 };
@@ -235,3 +346,8 @@ void UAV::emptyRoats()
 {
     points.clear();
 };
+void UAV::setRoat(vector<ChangeHeight> roating)
+{
+    emptyRoats();
+    points = roating;
+}

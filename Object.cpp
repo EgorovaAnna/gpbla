@@ -1,6 +1,13 @@
 #include "Object.h"
 
-Object::Object(float nx, float ny, bool npvo)
+Object::Object(double nx, double ny, double nh, bool npvo)
+{
+    x = nx;
+    y = ny;
+    height = nh;
+    pvo = npvo;
+}
+Object::Object(double nx, double ny, bool npvo)
 {
 	x = nx;
 	y = ny;
@@ -14,31 +21,43 @@ bool Object::isPVO()
 {
 	return pvo;
 }
-float Object::getX()
+double Object::getX()
 {
 	return x;
 }
-float Object::getY()
+double Object::getY()
 {
 	return y;
 }
-void Object::setX(float nx)
+double Object::getH()
+{
+    return height;
+}
+void Object::setX(double nx)
 {
 	x = nx;
 }
-void Object::setY(float ny)
+void Object::setY(double ny)
 {
 	y = ny;
+}
+void Object::setH(double nh)
+{
+    height = nh;
 }
 bool Object::operator()(Object a, Object b)
 {
 	return distance(a) < distance(b);
 }
-float Object::distance(Object b)
+double Object::distance(Object b)
 {
-	return pow(pow(x - b.getX(), 2) + pow(y - b.getY(), 2), 0.5);
+    return  pow(pow(x - b.getX(), 2) + pow(y - b.getY(), 2), 0.5);
 }
-float Object::distanceXY(float bx, float by)
+double Object::distanceDegree(Object b)
+{
+    return pow(pow((x - b.getX())*111300*cos((y + b.getY())*3.14/360), 2) + pow((y - b.getY())*111300, 2), 0.5);
+}
+double Object::distanceXY(double bx, double by)
 {
 	return pow(pow(x - bx, 2) + pow(y - by, 2), 0.5);
 }

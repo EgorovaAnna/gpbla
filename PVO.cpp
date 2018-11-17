@@ -1,10 +1,10 @@
 #include "PVO.h"
 
-PVO::PVO(float nx, float ny, float nr, float np) : GeoObject(nx, ny, nr, true)
+PVO::PVO(double nx, double ny, double nr, double np) : GeoObject(nx, ny, nr, true)
 {
 	p = np;
 };
-bool PVO::compile(float xuva, float yuva, float zuva)
+bool PVO::compile(double xuva, double yuva, double zuva)
 {
 	//cout << pow(pow(xuva - x, 2) + pow(yuva - y, 2) + pow(zuva - radius, 2), 0.5) << "  " << radius << " " << p*100 << '\n';
 	if (pow(pow(xuva - x, 2) + pow(yuva - y, 2) + pow(zuva - radius, 2), 0.5) <= radius)

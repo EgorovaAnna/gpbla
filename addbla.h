@@ -30,6 +30,8 @@ public:
     QString focus;
     QString maxH;
     QString v;
+    QString chH;
+    QString fA;
 
 private:
     Ui::AddBLA *ui;

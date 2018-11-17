@@ -17,7 +17,7 @@
    <property name="geometry">
     <rect>
      <x>70</x>
-     <y>140</y>
+     <y>110</y>
      <width>461</width>
      <height>31</height>
     </rect>
@@ -33,7 +33,7 @@
    <property name="geometry">
     <rect>
      <x>350</x>
-     <y>230</y>
+     <y>270</y>
      <width>110</width>
      <height>25</height>
     </rect>
@@ -42,14 +42,14 @@
     <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Широта правого верхнего угла карты&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
    </property>
    <property name="whatsThis">
-    <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Широта правого верхнего угла карты&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+    <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Долгота правого верхнего угла карты&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
    </property>
   </widget>
   <widget class="QLineEdit" name="lon00">
    <property name="geometry">
     <rect>
      <x>190</x>
-     <y>230</y>
+     <y>270</y>
      <width>113</width>
      <height>25</height>
     </rect>
@@ -58,14 +58,14 @@
     <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Долгота левого верхнего угла карты&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
    </property>
    <property name="whatsThis">
-    <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Долгота левого верхнего угла карты&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+    <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Широта левого верхнего угла карты&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
    </property>
   </widget>
   <widget class="QLineEdit" name="lat10">
    <property name="geometry">
     <rect>
      <x>70</x>
-     <y>300</y>
+     <y>330</y>
      <width>110</width>
      <height>25</height>
     </rect>
@@ -74,14 +74,14 @@
     <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Широта левого нижнего угла карты&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
    </property>
    <property name="whatsThis">
-    <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Широта левогонижнего угла карты&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+    <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Долгота левогонижнего угла карты&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
    </property>
   </widget>
   <widget class="QLineEdit" name="lon10">
    <property name="geometry">
     <rect>
      <x>190</x>
-     <y>300</y>
+     <y>330</y>
      <width>113</width>
      <height>25</height>
     </rect>
@@ -90,14 +90,14 @@
     <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Долгота левого нижнего угла карты&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
    </property>
    <property name="whatsThis">
-    <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Долгота левого нижнего угла карты&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+    <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Широта левого нижнего угла карты&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
    </property>
   </widget>
   <widget class="QLineEdit" name="lon11">
    <property name="geometry">
     <rect>
      <x>470</x>
-     <y>300</y>
+     <y>330</y>
      <width>113</width>
      <height>25</height>
     </rect>
@@ -106,14 +106,14 @@
     <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Долгота правого нижнего угла карты&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
    </property>
    <property name="whatsThis">
-    <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Долгота правого нижнего угла карты&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+    <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Широта правого нижнего угла карты&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
    </property>
   </widget>
   <widget class="QLineEdit" name="lat11">
    <property name="geometry">
     <rect>
      <x>350</x>
-     <y>300</y>
+     <y>330</y>
      <width>110</width>
      <height>25</height>
     </rect>
@@ -122,14 +122,14 @@
     <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Широта правого нижнего угла карты&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
    </property>
    <property name="whatsThis">
-    <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Широта правого нижнего угла карты&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+    <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Долгота правого нижнего угла карты&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
    </property>
   </widget>
   <widget class="QLineEdit" name="lon01">
    <property name="geometry">
     <rect>
      <x>470</x>
-     <y>230</y>
+     <y>270</y>
      <width>113</width>
      <height>25</height>
     </rect>
@@ -138,14 +138,14 @@
     <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Долгота правого верхнего угла карты&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
    </property>
    <property name="whatsThis">
-    <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Долгота правого верхнего угла карты&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+    <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Широта правого верхнего угла карты&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
    </property>
   </widget>
   <widget class="QLineEdit" name="lat00">
    <property name="geometry">
     <rect>
      <x>70</x>
-     <y>230</y>
+     <y>270</y>
      <width>110</width>
      <height>25</height>
     </rect>
@@ -154,7 +154,7 @@
     <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Широта левого верхнего угла карты&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
    </property>
    <property name="whatsThis">
-    <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Широта левого верхнего угла карты&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+    <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Долгота левого верхнего угла карты&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
    </property>
   </widget>
   <widget class="QPushButton" name="pushButton">
@@ -187,7 +187,7 @@
    <property name="geometry">
     <rect>
      <x>70</x>
-     <y>60</y>
+     <y>30</y>
      <width>511</width>
      <height>31</height>
     </rect>
@@ -211,13 +211,114 @@
    <property name="geometry">
     <rect>
      <x>540</x>
-     <y>140</y>
+     <y>110</y>
      <width>41</width>
      <height>31</height>
     </rect>
    </property>
    <property name="text">
     <string>...</string>
+   </property>
+  </widget>
+  <widget class="QToolButton" name="toolButton_2">
+   <property name="geometry">
+    <rect>
+     <x>540</x>
+     <y>190</y>
+     <width>41</width>
+     <height>31</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>...</string>
+   </property>
+  </widget>
+  <widget class="QLineEdit" name="pathLine_2">
+   <property name="geometry">
+    <rect>
+     <x>70</x>
+     <y>190</y>
+     <width>461</width>
+     <height>31</height>
+    </rect>
+   </property>
+   <property name="whatsThis">
+    <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Путь к файлу с картой&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+   </property>
+   <property name="text">
+    <string/>
+   </property>
+  </widget>
+  <widget class="QLabel" name="label_2">
+   <property name="geometry">
+    <rect>
+     <x>70</x>
+     <y>70</y>
+     <width>511</width>
+     <height>31</height>
+    </rect>
+   </property>
+   <property name="font">
+    <font>
+     <pointsize>13</pointsize>
+    </font>
+   </property>
+   <property name="text">
+    <string>Путь к файлу с картой</string>
+   </property>
+   <property name="textFormat">
+    <enum>Qt::RichText</enum>
+   </property>
+   <property name="scaledContents">
+    <bool>true</bool>
+   </property>
+  </widget>
+  <widget class="QLabel" name="label_3">
+   <property name="geometry">
+    <rect>
+     <x>70</x>
+     <y>150</y>
+     <width>511</width>
+     <height>31</height>
+    </rect>
+   </property>
+   <property name="font">
+    <font>
+     <pointsize>13</pointsize>
+    </font>
+   </property>
+   <property name="text">
+    <string>Путь к файлу привязки карты</string>
+   </property>
+   <property name="textFormat">
+    <enum>Qt::RichText</enum>
+   </property>
+   <property name="scaledContents">
+    <bool>true</bool>
+   </property>
+  </widget>
+  <widget class="QLabel" name="label_4">
+   <property name="geometry">
+    <rect>
+     <x>70</x>
+     <y>230</y>
+     <width>511</width>
+     <height>31</height>
+    </rect>
+   </property>
+   <property name="font">
+    <font>
+     <pointsize>13</pointsize>
+    </font>
+   </property>
+   <property name="text">
+    <string>Координаты углов изображения в градусах</string>
+   </property>
+   <property name="textFormat">
+    <enum>Qt::RichText</enum>
+   </property>
+   <property name="scaledContents">
+    <bool>true</bool>
    </property>
   </widget>
  </widget>

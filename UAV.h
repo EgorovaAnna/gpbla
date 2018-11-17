@@ -7,36 +7,42 @@
 
 class UAV
 {
-	float x, y, z;
+    double x, y, z;
 	int t; // текущее время
-	float radioview; //радиовидимость
-	float focus; //фокусное расстояние
-	float way; //запас хода (топлива?)
-	float maxH; //максимальная высота
-	float velocity; //скорость
-	vector<Object> points; //точки, через которые он должен пролететь
+    double radioview; //радиовидимость
+    double focus; //фокусное расстояние
+    double way; //запас хода (топлива?)
+    double maxH, flightAltitude; //максимальная высота, нормальная высота
+    double velocity; //скорость
+    double changingHeight; //скорость изменения высоты (угол снижения/подъема)
+    vector<ChangeHeight> points; //точки, через которые он должен пролететь
 	vector<Aim> aims;
 public:
-	UAV(float nx, float ny, float nz, int nt); //первичная инициализация
-	void addPoint(Object point); 
+    UAV(double nx, double ny, double nz, double fA, double cH = 30.); //первичная инициализация
+    UAV(double nx, double ny, double nz);
+    UAV(){};
+    void addPoint(ChangeHeight point);
 	void addAim(Aim newAim);
-	void iteration(float dt); //моделирование полета
+    void iteration(double dt); //моделирование полета
 	void deleteAim(Aim aim); //когда цель кто-то отснял
     void emptyRoats();
-	void setR(float rad);
-	void setF(float f);
-	void setW(float w);
-	void setH(float h);
-	void setV(float v);
-	float getX();
-	float getY();
-	float getR();
-	float getF();
-	float getW();
-	float getH();
-	float getV();
+    void setR(double rad);
+    void setF(double f);
+    void setW(double w);
+    void setH(double h);
+    void setV(double v);
+    void setX(double nx);
+    void setY(double ny);
+    double getX();
+    double getY();
+    double getR();
+    double getF();
+    double getW();
+    double getH();
+    double getV();
 	void roat(vector<Aim> aims); //метод ветвей и границ
 	void elaborateRoat(vector<GeoObject> objects); //уточнение траекторий
-	vector<Object> getRoat();
+    void setRoat(vector<ChangeHeight> roating);
+    vector<ChangeHeight> getRoat();
 };
 

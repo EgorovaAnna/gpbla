@@ -1,6 +1,6 @@
 #include "MapImage.h"
 
-MapImage::MapImage(float nx1, float nx2, float ny1, float ny2)
+MapImage::MapImage(double nx1, double nx2, double ny1, double ny2)
 {
 	map = new Map(nx1, nx2, ny1, ny2);
 }
@@ -19,6 +19,10 @@ void MapImage::loadFile(string file)
     image = new ImageForPNM(tsize);
     image -> loadIm(file);
 }
+void MapImage::setMap(Map *m)
+{
+    map = m;
+}
 void MapImage::setQImage(QImage *qimage)
 {
     image = new ImageForQt(qimage);
@@ -27,13 +31,15 @@ Object MapImage::coordinateToPoint(Object a)
 {
     return Object((int)(a.getX() - (*map)[0])*(image -> getX())/((*map)[1] - (*map)[0]), (int)(a.getY() - (*map)[2])*(image -> getY())/((*map)[3] - (*map)[2]));
 }
-Object MapImage::coordinateToPoint(float x, float y)
+Object MapImage::coordinateToPoint(double x, double y)
 {
     return Object((int)(x - (*map)[0])*(image -> getX())/((*map)[1] - (*map)[0]), (int)(y - (*map)[2])*(image -> getY())/((*map)[3] - (*map)[2]));
 }
-void MapImage::paintLine(vector<Object> objects, int color[3])
+void MapImage::paintLine(vector<ChangeHeight> objects, int color[3])
 {
-	vector<Object> points;
+    if (objects.empty())
+        return;
+    vector<ChangeHeight> points;
 	int x1, x2, y1, y2;
 	for (int i = 0; i < objects.size(); i++)
 		points.push_back(coordinateToPoint(objects[i]));
@@ -61,7 +67,18 @@ void MapImage::paintLine(vector<Object> objects, int color[3])
 }
 void MapImage::paintLine(vector<Object> objects, std::string color)
 {
-    vector<Object> points;
+    if (objects.empty())
+        return;
+    vector<ChangeHeight> obj;
+    for (auto i : objects)
+        obj.push_back(i);
+    paintLine(obj, color);
+}
+void MapImage::paintLine(vector<ChangeHeight> objects, std::string color)
+{
+    if (objects.empty())
+        return;
+    vector<ChangeHeight> points;
     int x1, x2, y1, y2;
     for (int i = 0; i < objects.size(); i++)
         points.push_back(coordinateToPoint(objects[i]));
@@ -89,6 +106,8 @@ void MapImage::paintLine(vector<Object> objects, std::string color)
 }
 void MapImage::paintObjects(vector<GeoObject> objects, int color[3])
 {
+    if (objects.empty())
+        return;
 	vector<Object> points;
 	vector<int> rad;
 	for (int i = 0; i < objects.size(); i++)
@@ -104,6 +123,8 @@ void MapImage::paintObjects(vector<GeoObject> objects, int color[3])
 }
 void MapImage::paintObjects(vector<GeoObject> objects, std::string color)
 {
+    if (objects.empty())
+        return;
     vector<Object> points, obj4;
 	vector<int> rad;
 	for (int i = 0; i < objects.size(); i++)
@@ -132,7 +153,7 @@ void MapImage::paintObjects(vector<GeoObject> objects, std::string color)
 {
 	alglib::spline1dinterpolant s1, s2;
 	int minxy = image -> getX(), maxxy = 0, imin, imax, signal = 0, i, j = -1, k, l, bufx, bufy;
-	float countkb[3];
+    double countkb[3];
 	vector<Object> points;
 	alglib::real_1d_array x1, x2, y1, y2;
 	double *dx1, *dx2, *dy1, *dy2;
@@ -157,7 +178,7 @@ void MapImage::paintObjects(vector<GeoObject> objects, std::string color)
 			countkb[0] = min(abs(points[j].getX() - k)/5.0, (image -> getX())/200.0);
 			countkb[1] = (l - points[j].getY())/(k - points[j].getX());
 			countkb[2] = - points[j].getX()*countkb[1] + points[j].getY();
-			while (points[j].distanceXY((float)k, (float)l) > 2*countkb[0])
+            while (points[j].distanceXY((double)k, (double)l) > 2*countkb[0])
 			{
 				cout << points[j].getX() << "__" << points[j].getY() << '\n';
 				bufx = points[j].getX() + countkb[0]; bufy = countkb[1]*bufx + countkb[2];
@@ -300,9 +321,11 @@ void MapImage::paintObjects(vector<GeoObject> objects, std::string color)
 void MapImage::paintAims(vector<Aim> aims, std::string color)
 {
 	vector<Object> points;
-    int rad = 20;
+    int rad = (image -> getX())/80;
 	for (int i = 0; i < aims.size(); i++)
+    {
 		points.push_back(coordinateToPoint(aims[i]));
+    }
 	for (int i = 0; i < aims.size(); i++)
 		for (int j = max((int)points[i].getX() - rad, 0); j <= min((int)points[i].getX() + rad, image -> getX()); j++)
 			for (int k = max((int)points[i].getY() - rad, 0); k <= min((int)points[i].getY() + rad, image -> getY()); k++)
@@ -312,7 +335,7 @@ void MapImage::paintAims(vector<Aim> aims, std::string color)
 void MapImage::paintAims(vector<Aim> aims, int color[3])
 {
 	vector<Object> points;
-    int rad = 20;//, color[3] = {0, 255, 0};
+    int rad = (image -> getX())/80;//, color[3] = {0, 255, 0};
 	for (int i = 0; i < aims.size(); i++)
 		points.push_back(coordinateToPoint(aims[i]));
 	for (int i = 0; i < aims.size(); i++)

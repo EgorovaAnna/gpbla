@@ -23,7 +23,7 @@ public:
     virtual void drawPoint(int x, int y, int color[3]){};
     virtual void drawLine(int x1, int x2, int y1, int y2, std::string color){};
     virtual void drawLine(int x1, int x2, int y1, int y2, int color[3]){};
-    ~Image(){};
+    virtual ~Image(){};
 };
 
 #endif

@@ -1,5 +1,4 @@
 #include "warningadding.h"
-#include "ui_warningadding.h"
 
 WarningAdding::WarningAdding(QWidget *parent) :
     QDialog(parent),

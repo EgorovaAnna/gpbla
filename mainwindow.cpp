@@ -28,13 +28,12 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(addaim, &AddAim::add, this, &MainWindow::addAim);
     connect(addobj, &AddObject::add, this, &MainWindow::addObj);
     connect(saveflight, &SaveFlight::saved, this, &MainWindow::saved);
-    connect(saveflight, &SaveFlight::savePBF, this, &MainWindow::savePBF);
     connect(addmap, &AddMap::cancelAdding, this, &MainWindow::show);
     connect(addbla, &AddBLA::cancelAdding, this, &MainWindow::show);
     connect(addaim, &AddAim::cancelAdding, this, &MainWindow::show);
     connect(addobj, &AddObject::cancelAdding, this, &MainWindow::show);
     connect(saveflight, &SaveFlight::cancelSaving, this, &MainWindow::show);
-    map = new Map();
+   // map = new Map();
     mapim = new MapImage(*map);
 }
 
@@ -46,25 +45,34 @@ MainWindow::~MainWindow()
 void MainWindow::saved()
 {
     ofstream fout;
-    vector<UAV> uav = map -> getUAV();
-    vector <Object> object;
-    vector<GeoObject> go = map -> getO();
-    vector<Aim> aim = map -> getA();
+    vector<UAV> uav = map -> getUAVdegree();
+    vector <ChangeHeight> object;
+    vector<GeoObject> go = map -> getOdegree();
+    vector<Aim> aim = map -> getAdegree();
     const string str = (saveflight -> path + "/" + saveflight -> name);
     fout.open(str);
     fout << "Заданы цели: " << "\n\t\t";
     for (int i = 0; i < aim.size(); i++)
-        fout << "(" << aim[i].getX() << " ; " << aim[i].getY() << " )\n\t\t";
+    {
+        fout << "(" << aim[i].getX() << " ; " << aim[i].getY() << " ) ";
+        fout << " высота: " << aim[i].getH();
+        fout << "\n\t\t";
+    }
     fout << "\nЗаданы препятствия: " << "\n\t\t";
     for (int i = 0; i < go.size(); i++)
         fout << "(" << go[i].getX() << " ; " << go[i].getY() << " )\n\t\t";
     for (int i = 0; i < uav.size(); i++)
     {
         object = uav[i].getRoat();
-        fout << "\nПоворотные точки маршрута БЛА № " << i + 1 << ":\n    Вылет из точки "; //добавить вывод характеристик?
-        for (int j = 0; j < object.size() - 1; j++)
-            fout << "(" << object[j].getX() << " ; " << object[j].getY() << " )\n\t\t\t";
-        fout << "Возвращение в точку " << "(" << object[object.size() - 1].getX() << " ; " << object[object.size() - 1].getY() << " )\n\n";
+        if (!object.empty())
+        {
+            fout << "\nПоворотные точки маршрута БЛА № " << i + 1 << ":\n    Вылет из точки "; //добавить вывод характеристик?
+            for (int j = 0; j < object.size() - 1; j++)
+                fout << "(" << object[j].getX() << " ; " << object[j].getY() << " ) высота: " << object[j].getH() << "\n\t\t\t";
+            fout << "Возвращение в точку " << "(" << object[object.size() - 1].getX() << " ; " << object[object.size() - 1].getY() << " )\n\n";
+        }
+        else
+            fout << "\nБЛА № " << i + 1 << " не используется\n";
     }
     fout.close();
 }
@@ -72,7 +80,7 @@ void MainWindow::savePBF()
 {
     ofstream fout;
     vector<UAV> uav = map -> getUAV();
-    vector <Object> object;
+    vector <ChangeHeight> object;
     vector<GeoObject> go = map -> getO();
     vector<Aim> aim = map -> getA();
     const string str = (saveflight -> path + "/" + saveflight -> name);
@@ -104,27 +112,25 @@ void MainWindow::addMap()
     ui -> pushButton_2 -> setEnabled(true);
     ui -> pushButton_3 -> setEnabled(true);
     ui -> plusSize -> setEnabled(true);
-    map -> operator [](0) = addmap -> latlon[0][0].toFloat();
-    map -> operator [](1) = addmap -> latlon[1][0].toFloat();
-    map -> operator [](2) = addmap -> latlon[0][3].toFloat();
-    map -> operator [](3) = addmap -> latlon[1][3].toFloat();
+    map = new Map(addmap -> latlon[0][0].toFloat(), addmap -> latlon[0][3].toFloat(), addmap -> latlon[1][0].toFloat(), addmap -> latlon[1][3].toFloat());
     mapim -> setQImage(&mapImage);
+    mapim->setMap(map);
     this -> show();
 }
 
 void MainWindow::addBLA()
 {
     //добавление бла
-    UAV uav(addbla -> coord[0].toFloat(), addbla -> coord[1].toFloat(), addbla -> coord[2].toFloat(), 0);
+    UAV uav(addbla -> coord[0].toFloat(), addbla -> coord[1].toFloat(), addbla -> coord[2].toFloat(), addbla -> fA.toFloat(), addbla -> chH.toFloat());
     uav.setR(addbla -> rad.toFloat());
     uav.setF(addbla -> focus.toFloat());
     uav.setH(addbla -> maxH.toFloat());
     uav.setV(addbla -> v.toFloat());
     map -> addUAV(uav);
-    if (!(map -> getA()).empty())
+    if (!(map -> getA()).empty() && !(map -> getUAV()).empty() )
     {
-        ui -> pushButton_5 -> setEnabled(true);
-        ui -> pushButton_6 -> setEnabled(true);
+        ui -> pushButton_5 -> setEnabled(true); //расчет траекторий
+        //ui -> pushButton_6 -> setEnabled(true); //моделирование
     }
     this -> show();
 }
@@ -135,10 +141,10 @@ void MainWindow::addAim()
     Aim aim(addaim -> coord[0].toFloat(), addaim -> coord[1].toFloat(), addaim -> coord[2].toFloat());
     map -> addAim(aim);
     mapim -> paintAims(map -> getA());
-    if (!(map -> getUAV()).empty())
+    if (!(map -> getUAV()).empty() && !(map -> getA()).empty())
     {
-        ui -> pushButton_5 -> setEnabled(true);
-        //ui -> pushButton_6 -> setEnabled(true);
+        ui -> pushButton_5 -> setEnabled(true); //расчет траекторий
+        //ui -> pushButton_6 -> setEnabled(true); //моделирование
     }
     ui -> label -> setPixmap(QPixmap::fromImage(mapImage.scaledToWidth(ui -> label -> width())));
     zoomOut();
@@ -166,21 +172,21 @@ void MainWindow::addObj()
 
 void MainWindow::on_pushButton_4_clicked()
 {
-    //тут должно быть окно с полем ввода для карты
+    //окно с полем ввода для карты
     this -> hide();
     addmap -> show();
 }
 
 void MainWindow::on_pushButton_clicked()
 {
-     //тут должно быть окно с полями ввода для характеристик БЛА
+     //окно с полями ввода для характеристик БЛА
     this -> hide();
     addbla -> show();
 }
 
 void MainWindow::on_pushButton_2_clicked()
 {
-     //тут должно быть окно с полем ввода для координат цели
+     //окно с полем ввода для координат цели
     this -> hide();
     addaim -> show();
 }
@@ -189,7 +195,7 @@ void MainWindow::on_pushButton_3_clicked()
 {
     this -> hide();
     addobj -> show();
-     //тут должно быть окно с полями ввода для характеристик препятствия
+     // окно с полями ввода для характеристик препятствия
 }
 void MainWindow::on_pushButton_5_clicked()
 {

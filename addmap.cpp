@@ -5,7 +5,10 @@ AddMap::AddMap(QWidget *parent) :
     QDialog(parent),
     ui(new Ui::AddMap)
 {
-    ui->setupUi(this);
+    ui -> setupUi(this);
+    ui -> label_3 -> hide();
+    ui -> toolButton_2 -> hide();
+    ui -> pathLine_2 -> hide();
     warning = new WarningAdding(this);
     connect(warning, &WarningAdding::ok, this, &AddMap::warningClose);
 }
@@ -33,6 +36,13 @@ void AddMap::on_pushButton_clicked()
     }
     else
     {
+        /*path = "/home/anna/prog/gpbla/map/map.ppm";
+        latlon[0][0] = "-3";
+        latlon[1][0] = "45";
+        latlon[0][3] = "2.5";
+        latlon[1][3] = "48";
+        this -> close();
+        emit add();*/ //отладочное
         this -> close();
         warning -> show();
     }
@@ -51,9 +61,6 @@ void AddMap::warningClose()
 
 void AddMap::on_toolButton_clicked()
 {
-    //QFileDialog dialog(this);
-    //dialog.setFileMode(QFileDialog::AnyFile);
-    //dialog.setNameFilter(tr("Images (*.png *.xpm *.jpg)"));
-    path = QFileDialog::getOpenFileName(this, tr("Open Image"), "/home/jana", tr("Image Files (*.png *.jpg *.bmp *.ppm *pnm)"));
+    path = QFileDialog::getOpenFileName(this, tr("Open map"), "/home/", tr("Image Files (*.png *.jpg *.bmp *.ppm *pnm *tif)"));
     ui -> pathLine ->setText(path);
 }

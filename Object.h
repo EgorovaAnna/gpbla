@@ -14,41 +14,45 @@ using namespace std;
 class Object
 {
 protected:
-	float x, y; 
+    double x, y, height;
 	bool pvo;
 public:
+    Object(double nx, double ny, double nh, bool npvo = false);
     Object(bool npvo = false);
-	Object(float nx, float ny, bool npvo = false);
+    Object(double nx, double ny, bool npvo = false);
 	bool isPVO(); 
-	float getX();
-	float getY();
-	void setX(float nx);
-	void setY(float ny);
+    double getX();
+    double getY();
+    double getH();
+    void setX(double nx);
+    void setY(double ny);
+    void setH(double nh);
 	bool operator()(Object a, Object b);
-	float distance(Object b);
-	float distanceXY(float x, float y);
+    double distance(Object b);
+    double distanceDegree(Object b);
+    double distanceXY(double x, double y);
 };
 class Line
 {
-	float k, b;
+    double k, b;
 public:
-	Line(float nk, float nb)
+    Line(double nk, double nb)
 	{
 		k = nk;
 		b = nb;
 	};
-	float operator[](int a)
+    double operator[](int a)
 	{
 		if (a == 0)
 			return k;
 		else
 			return b;
 	};
-	void setK(float nk)
+    void setK(double nk)
 	{
 		k = nk;
 	};
-	void setB(float nb)
+    void setB(double nb)
 	{
 		b = nb;
 	};

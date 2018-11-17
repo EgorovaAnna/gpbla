@@ -1,12 +1,7 @@
 #include "Aim.h"
 
-Aim::Aim(float nx, float ny, float nz, bool npvo) : Object(nx, ny, npvo)
+Aim::Aim(double nx, double ny, double nz, bool npvo) : Object(nx, ny, nz, npvo)
 {
-	z = nz;
-};
-float Aim::getH()
-{
-    return z;
 };
 bool Aim::operator ==(Aim a2)
 {

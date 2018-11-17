@@ -1,10 +1,12 @@
+#ifndef OBJECT_H
+#define OBJECT_H
 #include "Object.h"
 
 class Aim: public Object
 {
-	float z; //для учета рельефа
 public:
-	Aim(float nx, float ny, float nz, bool npvo = false); // сначала вызвать конструктор родительского! 
-    float getH();
+    Aim(double nx, double ny, double nz, bool npvo = false); // сначала вызвать конструктор родительского!
 	bool operator ==(Aim a2);
 };
+
+#endif

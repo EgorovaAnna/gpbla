@@ -1,6 +1,7 @@
 #ifndef WARNINGADDING_H
 #define WARNINGADDING_H
 
+#include "ui_warningadding.h"
 #include <QDialog>
 
 namespace Ui {
